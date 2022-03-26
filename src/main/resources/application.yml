@@ -18,8 +18,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: [google email]
-    password: [password]
+    username: [@gmail.com아이디]
+    password: [비번]
     properties:
       mail:
         smtp:

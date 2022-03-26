@@ -1,4 +1,4 @@
-package login.jwtlogin.auth;
+package login.jwtlogin.auth.email;
 
 import login.jwtlogin.domain.email.ConfirmationToken;
 import lombok.RequiredArgsConstructor;

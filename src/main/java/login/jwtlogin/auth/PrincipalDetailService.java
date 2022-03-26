@@ -1,7 +1,8 @@
 package login.jwtlogin.auth;
 
-import login.jwtlogin.domain.Member;
-import login.jwtlogin.domain.email.ConfirmationToken;
+import login.jwtlogin.auth.email.ConfirmationTokenService;
+import login.jwtlogin.auth.email.VerifyCodeService;
+import login.jwtlogin.domain.email.VerifyCode;
 import login.jwtlogin.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,7 @@ public class PrincipalDetailService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
     private final ConfirmationTokenService confirmationTokenService;
+    private final VerifyCodeService verifyCodeService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -33,13 +35,22 @@ public class PrincipalDetailService implements UserDetailsService {
 
     }
 
+//    @Transactional
+//    public Optional<ConfirmationToken> confirmEmail(String token) {
+//        Optional<ConfirmationToken> confirmationToken = confirmationTokenService.findExpiredToken(token);
+//        if (confirmationToken.isPresent()) {
+//            confirmationToken.get().useToken();
+//        }
+//        return confirmationToken;
+//    }
+
     @Transactional
-    public Optional<ConfirmationToken> confirmEmail(String token) {
-        Optional<ConfirmationToken> confirmationToken = confirmationTokenService.findExpiredToken(token);
-        if (confirmationToken.isPresent()) {
-            confirmationToken.get().useToken();
+    public Optional<VerifyCode> confirmEmail(String code) {
+        Optional<VerifyCode> findcode = verifyCodeService.findExpiredCode(code);
+        if (findcode.isPresent()) {
+            findcode.get().useCode();
         }
-        return confirmationToken;
+        return findcode;
     }
 
 

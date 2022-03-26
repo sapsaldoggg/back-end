@@ -1,4 +1,4 @@
-package login.jwtlogin.auth;
+package login.jwtlogin.auth.email;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;

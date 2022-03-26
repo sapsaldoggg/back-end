@@ -21,6 +21,10 @@ public class ConfirmationToken {
     @Column(length = 36, name = "token_id")
     private String id;
 
+//    @Id @GeneratedValue
+//    @Column(name = "token_id")
+//    private Long id;
+
     private LocalDateTime expiredDate;
 
     private boolean expired;
@@ -38,7 +42,7 @@ public class ConfirmationToken {
 
     public static ConfirmationToken createEmailConfirmationToken() {
         ConfirmationToken confirmationToken = new ConfirmationToken();
-        confirmationToken.expiredDate = LocalDateTime.now().plusMinutes(5);  //5분 후 만료;
+        confirmationToken.expiredDate = LocalDateTime.now().plusMinutes(3);  //5분 후 만료;
         confirmationToken.expired = false;
         return confirmationToken;
     }
