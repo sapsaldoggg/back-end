@@ -63,17 +63,6 @@ public class IndexController {
     }
 
 
-    //메일의 url 로 접속 시 동작
-//    @GetMapping("/confirm-email")
-//    public Object mailAuthGet(@RequestParam String token) {
-//        log.info(token);
-//        Optional<ConfirmationToken> result = principalDetailService.confirmEmail(token);
-//        if(result.isEmpty()){
-//            return new ErrorResult("EMAIL_FAIL", "이메일 인증에 실패했습니다");
-//        }
-//        return "success";
-//    }
-
     @PostMapping("/mailcode-auth")
     public Object mailCodeAuth(@RequestBody String code) {
         Optional<VerifyCode> result = principalDetailService.confirmEmail(code);

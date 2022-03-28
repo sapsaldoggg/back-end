@@ -26,10 +26,9 @@ public class Board {
 
     private String title;
 
-    //private String content;
-
     @CreatedDate
-    private LocalDateTime date;
+    @Column(updatable = false)
+    private LocalDateTime createdTime;
 
     @Enumerated(EnumType.STRING)
     private MatchingStatus matchingStatus;
@@ -38,12 +37,19 @@ public class Board {
 
     private Integer currentNumber;
 
-//    public static Board createParty(Member member, Restaurant restaurant) {
-//        Board board = new Board();
-//        board.member = member;
-//        board.restaurant = restaurant;
-//
-//    }
+    public static Board create(Member member, Restaurant restaurant, String title, int maxNumber) {
+        Board board = new Board();
+        board.member = member;
+        board.restaurant = restaurant;
+        board.title = title;
+        board.createdTime = LocalDateTime.now();
+        board.matchingStatus = MatchingStatus.NON_MATCHED;
+        board.maxNumber = maxNumber;
+        board.currentNumber = 0;
+        return board;
+    }
+
+
 
 
 }
