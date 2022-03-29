@@ -27,6 +27,7 @@ public class IndexController {
     private final VerifyCodeService verifyCodeService;
     private final PrincipalDetailService principalDetailService;
 
+    //회원가입
     @PostMapping("/join")
     public Object join(@Validated @RequestBody JoinDto joinDto) {
         log.info(joinDto.getUniversity().getClass().getName());
@@ -36,6 +37,7 @@ public class IndexController {
         return "success";
     }
 
+    //아이디 중복검사
     @PostMapping("/duplicate-loginId")
     public Object duplicateId(@RequestBody @Validated @NotBlank String loginId) {
         if (memberRepository.findByLoginId(loginId).isPresent()) {
@@ -45,6 +47,7 @@ public class IndexController {
         }
     }
 
+    //닉네임 중복 검사
     @PostMapping("/duplicate-nickname")
     public Object duplicateNickName(@RequestBody @Validated @NotBlank String nickname) {
         log.info(nickname);
@@ -63,6 +66,7 @@ public class IndexController {
     }
 
 
+    //메일 인증 결과
     @PostMapping("/mailcode-auth")
     public Object mailCodeAuth(@RequestBody String code) {
         Optional<VerifyCode> result = principalDetailService.confirmEmail(code);

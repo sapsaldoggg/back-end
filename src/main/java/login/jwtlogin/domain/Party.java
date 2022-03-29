@@ -4,16 +4,15 @@ import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
-public class Board {
+public class Party {
 
     @Id
     @GeneratedValue
-    @Column(name = "board_id")
+    @Column(name = "party_id")
     private Long id;
 
     @JoinColumn(name = "member_id")
@@ -37,16 +36,21 @@ public class Board {
 
     private Integer currentNumber;
 
-    public static Board create(Member member, Restaurant restaurant, String title, int maxNumber) {
-        Board board = new Board();
-        board.member = member;
-        board.restaurant = restaurant;
-        board.title = title;
-        board.createdTime = LocalDateTime.now();
-        board.matchingStatus = MatchingStatus.NON_MATCHED;
-        board.maxNumber = maxNumber;
-        board.currentNumber = 0;
-        return board;
+    public static Party create(Member member, Restaurant restaurant, String title, int maxNumber) {
+        Party party = new Party();
+        party.member = member;
+        party.restaurant = restaurant;
+        party.title = title;
+        party.createdTime = LocalDateTime.now();
+        party.matchingStatus = MatchingStatus.NON_MATCHED;
+        party.maxNumber = maxNumber;
+        party.currentNumber = 0;
+        return party;
+    }
+
+    public void update(String title, int maxNumber) {
+        this.title = title;
+        this.maxNumber = maxNumber;
     }
 
 

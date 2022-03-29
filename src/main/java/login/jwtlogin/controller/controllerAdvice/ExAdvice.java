@@ -45,9 +45,11 @@ public class ExAdvice {
         return new ErrorResult("JOIN_TYPE_ERROR", "타입이 맞지 않습니다");
     }
 
-//    @ExceptionHandler
-//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-//    public ErrorResult error(RuntimeException e) {
-//        return new ErrorResult("EMAIL_ERROR", "이메일 인증 실패");
-//    }
+    //------------------------------------------------------------------
+    // 조회 실패 시
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResult error(IllegalArgumentException e) {
+        return new ErrorResult("ILLEGAL_ERROR", e.getMessage());
+    }
 }

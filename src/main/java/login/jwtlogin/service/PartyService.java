@@ -1,0 +1,36 @@
+package login.jwtlogin.service;
+
+import login.jwtlogin.domain.Member;
+import login.jwtlogin.domain.Party;
+import login.jwtlogin.domain.Restaurant;
+import login.jwtlogin.repository.PartyRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
+
+@Service
+@Slf4j
+@RequiredArgsConstructor
+public class PartyService {
+
+    private final PartyRepository partyRepository;
+
+    public void create(Member member, Restaurant restaurant, String title, int maxNumber) {
+        Party party = Party.create(member, restaurant, title, maxNumber);
+        partyRepository.save(party);
+    }
+
+    @Transactional
+    public void update(Long id, String title, int maxNumber) {
+        Party party = partyRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("파티를 찾을 수 없습니다")
+        );
+        party.update(title, maxNumber);
+    }
+
+
+
+}

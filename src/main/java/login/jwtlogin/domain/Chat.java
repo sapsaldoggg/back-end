@@ -15,9 +15,9 @@ public class Chat {
     @Column(name = "chat_id")
     private Long id;
 
-    @JoinColumn(name = "board_id")
+    @JoinColumn(name = "party_id")
     @ManyToOne(fetch = FetchType.LAZY)
-    private Board board;
+    private Party party;
 
     @JoinColumn(name = "member_id")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -29,9 +29,9 @@ public class Chat {
     @Column(updatable = false)
     private LocalDateTime sendTime;
 
-    public static Chat create(Board board, Member member, String message) {
+    public static Chat create(Party party, Member member, String message) {
         Chat chat = new Chat();
-        chat.board = board;
+        chat.party = party;
         chat.member = member;
         chat.message = message;
         chat.sendTime = LocalDateTime.now();

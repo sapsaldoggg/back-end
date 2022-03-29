@@ -54,8 +54,8 @@ public class Member {
     private List<String> favoriteFoods = new ArrayList<>();
 
 
-    @OneToMany(mappedBy = "member")
-    private List<Board> boards = new ArrayList<>();
+//    @OneToMany(mappedBy = "member")
+//    private List<Party> parties = new ArrayList<>();
 
     //------------------------------------------------------------------------------------------------
 
