@@ -5,10 +5,13 @@ import login.jwtlogin.auth.email.VerifyCodeService;
 import login.jwtlogin.controller.memberDTO.JoinDto;
 import login.jwtlogin.domain.Member;
 import login.jwtlogin.domain.email.VerifyCode;
-import login.jwtlogin.error.ErrorResult;
+import login.jwtlogin.result.ErrorResult;
 import login.jwtlogin.repository.MemberRepository;
+import login.jwtlogin.result.Result;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -34,18 +37,20 @@ public class IndexController {
         Member member = new Member(joinDto.getNickname(), joinDto.getLoginId(), bCryptPasswordEncoder.encode(joinDto.getPassword()),
                 joinDto.getSex(), joinDto.getEmail(), "ROLE_USER", joinDto.getUniversity(), joinDto.getDept(), joinDto.getSno(), 0L);
         memberRepository.save(member);
-        return "success";
+        return true;
     }
 
     //아이디 중복검사
     @PostMapping("/duplicate-loginId")
     public Object duplicateId(@RequestBody @Validated @NotBlank String loginId) {
         if (memberRepository.findByLoginId(loginId).isPresent()) {
-            return new ErrorResult("JOIN_ID_ERROR", "이미 존재하는 아이디입니다");
+            //return new ErrorResult("JOIN_ID_ERROR", "이미 존재하는 아이디입니다");
+            return new ResponseEntity<ErrorResult>(new ErrorResult("JOIN_ID_ERROR", "이미 존재하는 아이디입니다"), HttpStatus.BAD_REQUEST);
         } else {
-            return "success";
+            return true;
         }
     }
+
 
     //닉네임 중복 검사
     @PostMapping("/duplicate-nickname")
@@ -55,7 +60,7 @@ public class IndexController {
         if (memberRepository.findByNickName(nickname).isPresent()) {
             return new ErrorResult("JOIN_NICKNAME_ERROR", "이미 존재하는 닉네임입니다");
         } else {
-            return "success";
+            return true;
         }
     }
 
@@ -71,8 +76,9 @@ public class IndexController {
     public Object mailCodeAuth(@RequestBody String code) {
         Optional<VerifyCode> result = principalDetailService.confirmEmail(code);
         if (result.isEmpty()) {
-            return new ErrorResult("EMAIL_FAIL", "이메일 인증에 실패했습니다");
+            return new ResponseEntity<ErrorResult>(new ErrorResult("EMAIL_FAIL", "이메일 인증에 실패했습니다"),
+                    HttpStatus.BAD_REQUEST);
         }
-        return "success";
+        return true;
     }
 }

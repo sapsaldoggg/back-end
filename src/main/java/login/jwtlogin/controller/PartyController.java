@@ -32,7 +32,7 @@ public class PartyController {
 
     //파티 생성
     @PostMapping("/party")
-    public String create(@AuthenticationPrincipal PrincipalDetails principalDetails,
+    public Boolean create(@AuthenticationPrincipal PrincipalDetails principalDetails,
                          @RequestBody PartyDto partyDto,
                          @PathVariable(name = "restaurant_id") Long id) {
         Member member = principalDetails.getMember();
@@ -40,7 +40,7 @@ public class PartyController {
                 () -> new IllegalArgumentException("존재하지 않는 식당입니다.")
         );
         partyService.create(member, restaurant, partyDto.getTitle(), partyDto.getMaxNumber());
-        return "success";
+        return true;
     }
 
     //파티 입장
@@ -53,9 +53,9 @@ public class PartyController {
 
     //파티 수정
     @PutMapping("/party/{party_id}")
-    public String edit(@RequestBody PartyDto partyDto, @PathVariable(name = "party_id") Long id) {
+    public Boolean edit(@RequestBody PartyDto partyDto, @PathVariable(name = "party_id") Long id) {
         partyService.update(id, partyDto.getTitle(), partyDto.getMaxNumber());
-        return "success";
+        return true;
     }
 
 }

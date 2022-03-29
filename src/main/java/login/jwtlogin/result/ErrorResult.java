@@ -1,4 +1,4 @@
-package login.jwtlogin.error;
+package login.jwtlogin.result;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

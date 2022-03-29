@@ -8,4 +8,5 @@ public class PartyDto {
     private String title;
 
     private Integer maxNumber;
+
 }

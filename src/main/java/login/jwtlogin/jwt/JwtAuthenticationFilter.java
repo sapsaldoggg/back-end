@@ -5,7 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import login.jwtlogin.auth.PrincipalDetails;
 import login.jwtlogin.controller.memberDTO.LoginDto;
-import login.jwtlogin.error.ErrorResult;
+import login.jwtlogin.result.ErrorResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
