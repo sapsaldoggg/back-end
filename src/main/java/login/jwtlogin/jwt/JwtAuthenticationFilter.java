@@ -99,6 +99,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String error_json = objectMapper.writeValueAsString(new ErrorResult("LOGIN_FAIL", "로그인에 실패했습니다"));
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
+        response.setStatus(400);
         response.getWriter().write(error_json);
     }
 

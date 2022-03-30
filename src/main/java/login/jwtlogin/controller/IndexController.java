@@ -56,8 +56,8 @@ public class IndexController {
     //아이디 중복검사
     @PostMapping("/duplicate-loginId")
     public Object duplicateId(@RequestBody @Validated @NotBlank String loginId) {
+        log.info(loginId);
         if (memberRepository.findByLoginId(loginId).isPresent()) {
-            //return new ErrorResult("JOIN_ID_ERROR", "이미 존재하는 아이디입니다");
             return new ResponseEntity<ErrorResult>(new ErrorResult("JOIN_ID_ERROR", "이미 존재하는 아이디입니다"), HttpStatus.BAD_REQUEST);
         } else {
             return true;
