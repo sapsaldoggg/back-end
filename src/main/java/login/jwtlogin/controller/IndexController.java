@@ -34,8 +34,21 @@ public class IndexController {
     @PostMapping("/join")
     public Object join(@Validated @RequestBody JoinDto joinDto) {
         log.info(joinDto.getUniversity().getClass().getName());
-        Member member = new Member(joinDto.getNickname(), joinDto.getLoginId(), bCryptPasswordEncoder.encode(joinDto.getPassword()),
-                joinDto.getSex(), joinDto.getEmail(), "ROLE_USER", joinDto.getUniversity(), joinDto.getDept(), joinDto.getSno(), 0L);
+//        Member member = new Member(joinDto.getNickname(), joinDto.getLoginId(), bCryptPasswordEncoder.encode(joinDto.getPassword()),
+//                joinDto.getSex(), joinDto.getEmail(), "ROLE_USER", joinDto.getUniversity(), joinDto.getDept(), joinDto.getSno(), 0L);
+        Member member = Member.builder()
+                .nickname(joinDto.getNickname())
+                .loginId(joinDto.getLoginId())
+                .password(bCryptPasswordEncoder.encode(joinDto.getPassword()))
+                .sex(joinDto.getSex())
+                .roles("ROLE_USER")
+                .email(joinDto.getEmail())
+                .university(joinDto.getUniversity())
+                .dept(joinDto.getDept())
+                .sno(joinDto.getSno())
+                .reliability(0L)
+                .build();
+
         memberRepository.save(member);
         return true;
     }

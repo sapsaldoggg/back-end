@@ -1,9 +1,6 @@
 package login.jwtlogin.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.awt.datatransfer.Clipboard;
@@ -11,6 +8,8 @@ import java.util.*;
 
 @Entity
 @Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class Member {
 
@@ -60,18 +59,18 @@ public class Member {
     //------------------------------------------------------------------------------------------------
 
 
-    public Member(String nickname, String loginId, String password, String sex, String email, String roles, String university, String dept, Integer sno, Long reliability) {
-        this.nickname = nickname;
-        this.loginId = loginId;
-        this.password = password;
-        this.sex = sex;
-        this.email = email;
-        this.roles= roles;
-        this.university = university;
-        this.dept = dept;
-        this.sno = sno;
-        this.reliability = reliability;
-    }
+//    public Member(String nickname, String loginId, String password, String sex, String email, String roles, String university, String dept, Integer sno, Long reliability) {
+//        this.nickname = nickname;
+//        this.loginId = loginId;
+//        this.password = password;
+//        this.sex = sex;
+//        this.email = email;
+//        this.roles= roles;
+//        this.university = university;
+//        this.dept = dept;
+//        this.sno = sno;
+//        this.reliability = reliability;
+//    }
 
     public List<String> getRoleList() {
         if (this.roles.length() > 0) {
