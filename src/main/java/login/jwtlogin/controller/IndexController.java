@@ -58,7 +58,7 @@ public class IndexController {
     public Object duplicateId(@RequestBody @Validated @NotBlank String loginId) {
         log.info(loginId);
         if (memberRepository.findByLoginId(loginId).isPresent()) {
-            return new ResponseEntity<ErrorResult>(new ErrorResult("JOIN_ID_ERROR", "이미 존재하는 아이디입니다"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<Boolean>(false, HttpStatus.BAD_REQUEST);
         } else {
             return true;
         }
@@ -71,7 +71,7 @@ public class IndexController {
         log.info(nickname);
         log.info(nickname.getClass().getName());
         if (memberRepository.findByNickName(nickname).isPresent()) {
-            return new ErrorResult("JOIN_NICKNAME_ERROR", "이미 존재하는 닉네임입니다");
+            return new ResponseEntity<Boolean>(false, HttpStatus.BAD_REQUEST);
         } else {
             return true;
         }
@@ -79,18 +79,19 @@ public class IndexController {
 
     //메일로 url 보내기
     @PostMapping("/mail-auth")
-    public void mailAuthReq(@RequestBody @Email String email) {
+    public Boolean mailAuthReq(@RequestBody @Email String email) {
         verifyCodeService.createVerifyCode(email);
+        return true;
     }
 
 
     //메일 인증 결과
     @PostMapping("/mailcode-auth")
     public Object mailCodeAuth(@RequestBody String code) {
+        log.info(code);
         Optional<VerifyCode> result = principalDetailService.confirmEmail(code);
         if (result.isEmpty()) {
-            return new ResponseEntity<ErrorResult>(new ErrorResult("EMAIL_FAIL", "이메일 인증에 실패했습니다"),
-                    HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<Boolean>(false, HttpStatus.BAD_REQUEST);
         }
         return true;
     }

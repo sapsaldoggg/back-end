@@ -50,7 +50,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         // header가 있는지 확인
         if (jwtHeader == null || !jwtHeader.startsWith(JwtProperties.TOKEN_PREFIX)) {
             chain.doFilter(request,response);
-            return;
+            return;  //필터가 더이상 진행x
         }
 
         String jwtToken = request.getHeader(JwtProperties.HEADER_STRING).replace(JwtProperties.TOKEN_PREFIX, "");
@@ -64,7 +64,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             PrincipalDetails principalDetails = new PrincipalDetails(member);
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(principalDetails, null, principalDetails.getAuthorities());
-            //강제로 세션에 접근하여 authentication 객체 저장
+            //강제로 세션에 접근하여 authentication 객체 저장(SecurityContextHolder에 저장)
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             chain.doFilter(request, response);
