@@ -5,7 +5,11 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import login.jwtlogin.auth.PrincipalDetails;
 import login.jwtlogin.controller.memberDTO.LoginDto;
+import login.jwtlogin.controller.memberDTO.LoginResultDto;
+import login.jwtlogin.domain.Member;
 import login.jwtlogin.result.ErrorResult;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -80,6 +84,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         log.info("successful");
 
         PrincipalDetails principalDetails = (PrincipalDetails) authResult.getPrincipal();
+        Member member = principalDetails.getMember();
 
         //토큰 생성
         String jwtToken = JWT.create()
@@ -89,8 +94,25 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .withClaim("loginId", principalDetails.getMember().getLoginId())
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
 
-        response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX+jwtToken);
-        //body로 전송하는것으로 수정예정 ( Bearer 빼고 전달 )
+        //response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX+jwtToken);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+//        LoginResultDto loginResultDto = LoginResultDto.builder()
+//                .token(jwtToken)
+//                .nickname(member.getNickname())
+//                .loginId(member.getLoginId())
+//                .sex(member.getSex())
+//                .university(member.getUniversity())
+//                .dept(member.getDept())
+//                .sno(member.getSno())
+//                .reliability(member.getReliability())
+//                .build();
+
+        String jsonToken = objectMapper.writeValueAsString(new Token(jwtToken));
+        response.setContentType("application/json");
+        response.setCharacterEncoding("utf-8");
+        response.getWriter().write(jsonToken);
+        //body 로 전송하는것으로 수정 ( 토큰 값만 )
     }
 
     @Override
@@ -103,6 +125,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.setStatus(400);
         response.getWriter().write(error_json);
     }
+
+    @Getter
+    @AllArgsConstructor
+    static class Token{
+        private String token;
+    }
+
+
 
 
 

@@ -1,7 +1,9 @@
 package login.jwtlogin.repository;
 
 
+import login.jwtlogin.domain.Member;
 import login.jwtlogin.domain.Party;
+import login.jwtlogin.domain.Restaurant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,13 +35,26 @@ public class PartyRepository {
 
     /**
      *
-     * @param id : 식당 id
+     * @param id : 식당 객체
      * @return : 식당에 해당하는 파티목록 반환
      */
-    public List<Party> findByRestaurantId(Long id) {
+    public List<Party> findByRestaurantId(Restaurant restaurant) {
         return em.createQuery("select p from Party p where p.restaurant = :restaurant", Party.class)
-                .setParameter("restaurant", id)
+                .setParameter("restaurant", restaurant)
                 .getResultList();
+    }
+
+    /**
+     *
+     * @param : member 객체
+     * @return : 요청한 회원이 방장을 맡고 있는 파티가 있을 시 해당 파티 반환
+     */
+    public Optional<Party> findPartyOwnerByMemberId(Member member) {
+        return em.createQuery("select p from Party p where p.member = :member", Party.class)
+                .setParameter("member", member)
+                .getResultList()
+                .stream()
+                .findFirst();
     }
 
 }

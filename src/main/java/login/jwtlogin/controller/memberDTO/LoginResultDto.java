@@ -5,9 +5,13 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class MyPageDto {
+public class LoginResultDto {
+
+    private String token;
 
     private String nickname;
+
+    private String loginId;
 
     private String sex;
 

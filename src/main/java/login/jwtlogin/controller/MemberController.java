@@ -27,7 +27,9 @@ public class MemberController {
                 .university(member.getUniversity())
                 .dept(member.getDept())
                 .sno(member.getSno())
+                .reliability(member.getReliability())
                 .build();
+
         return myPageDto;
     }
 

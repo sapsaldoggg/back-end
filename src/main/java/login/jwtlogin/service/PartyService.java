@@ -18,11 +18,13 @@ public class PartyService {
 
     private final PartyRepository partyRepository;
 
+    //파티 생성
     public void create(Member member, Restaurant restaurant, String title, int maxNumber) {
         Party party = Party.create(member, restaurant, title, maxNumber);
         partyRepository.save(party);
     }
 
+    // 파티 수정
     @Transactional
     public void update(Long id, String title, int maxNumber) {
         Party party = partyRepository.findById(id).orElseThrow(
@@ -30,7 +32,6 @@ public class PartyService {
         );
         party.update(title, maxNumber);
     }
-
 
 
 }

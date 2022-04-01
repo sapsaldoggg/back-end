@@ -3,6 +3,7 @@ package login.jwtlogin.controller;
 import login.jwtlogin.auth.PrincipalDetailService;
 import login.jwtlogin.auth.email.VerifyCodeService;
 import login.jwtlogin.controller.memberDTO.JoinDto;
+import login.jwtlogin.controller.memberDTO.MyPageDto;
 import login.jwtlogin.domain.Member;
 import login.jwtlogin.domain.email.VerifyCode;
 import login.jwtlogin.result.ErrorResult;
