@@ -48,7 +48,7 @@ public class ExAdvice {
     // 조회 실패 시
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResult error(IllegalArgumentException e) {
-        return new ErrorResult("ILLEGAL_ERROR", e.getMessage());
+    public Boolean error(IllegalArgumentException e) {
+        return false;
     }
 }

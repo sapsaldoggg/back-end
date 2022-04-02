@@ -16,11 +16,11 @@ public class Party {
     private Long id;
 
     @JoinColumn(name = "member_id")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
     @JoinColumn(name = "restaurant_id")
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     private Restaurant restaurant;
 
     private String title;

@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @RestController
 @Slf4j
@@ -30,6 +32,23 @@ public class MemberController {
                 .reliability(member.getReliability())
                 .build();
 
+        return myPageDto;
+    }
+
+    //다른 회원들 정보 조회 ( ex) 파티멤버 클릭시 해당 멤버 정보 확인 )
+    @GetMapping("/{member_id}")
+    public MyPageDto memberInfo(@PathVariable(name = "member_id") Long id) {
+        Member member = memberRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("존재하지 않는 회원입니다")
+        );
+        MyPageDto myPageDto = MyPageDto.builder()
+                .nickname(member.getNickname())
+                .sex(member.getSex())
+                .university(member.getUniversity())
+                .dept(member.getDept())
+                .sno(member.getSno())
+                .reliability(member.getReliability())
+                .build();
         return myPageDto;
     }
 
