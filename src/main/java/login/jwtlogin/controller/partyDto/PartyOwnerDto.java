@@ -1,9 +1,7 @@
 package login.jwtlogin.controller.partyDto;
 
-import login.jwtlogin.domain.Party;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.w3c.dom.stylesheets.LinkStyle;
 
 import java.util.List;
 
@@ -14,9 +12,9 @@ public class PartyOwnerDto {
 
     private Long partyId;
 
-    private List<PartyListDto> parties;
+    private List<PartyDto> parties;
 
-    public PartyOwnerDto(List<PartyListDto> parties) {
+    public PartyOwnerDto(List<PartyDto> parties) {
         this.parties = parties;
     }
 }

@@ -38,6 +38,8 @@ public class Member {
 
     private Long reliability;
 
+    private Boolean master;
+
 
     @ElementCollection
     @CollectionTable(name = "friend" , joinColumns =

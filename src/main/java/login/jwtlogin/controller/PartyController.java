@@ -1,7 +1,7 @@
 package login.jwtlogin.controller;
 
 import login.jwtlogin.auth.PrincipalDetails;
-import login.jwtlogin.controller.partyDto.PartyListDto;
+import login.jwtlogin.controller.partyDto.PartyDto;
 import login.jwtlogin.controller.partyDto.PartyOwnerDto;
 import login.jwtlogin.controller.partyDto.PartyUpdateDto;
 import login.jwtlogin.domain.Member;
@@ -12,9 +12,7 @@ import login.jwtlogin.repository.RestaurantRepository;
 import login.jwtlogin.service.PartyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -45,10 +43,10 @@ public class PartyController {
                 () -> new IllegalArgumentException("존재하지 않는 식당입니다.")
         );
         List<Party> parties = partyRepository.findByRestaurantId(restaurant);
-        List<PartyListDto> partyListDtoList = new ArrayList<>();
+        List<PartyDto> partyListDtoList = new ArrayList<>();
 
         for (Party party : parties) {
-            partyListDtoList.add(new PartyListDto(party.getId(), party.getMember().getNickname(),
+            partyListDtoList.add(new PartyDto(party.getId(), party.getMember().getNickname(),
                     party.getRestaurant().getName(), party.getTitle(), party.getCreatedTime(),
                     party.getMatchingStatus(), party.getMaxNumber(), party.getCurrentNumber()));
         }
@@ -71,10 +69,12 @@ public class PartyController {
 
     //파티 입장
     @GetMapping("/party/{party_id}")
-    public Party enter(@PathVariable(name = "party_id") Long id) {
-        return partyRepository.findById(id).orElseThrow(
+    public PartyDto enter(@PathVariable(name = "party_id") Long id) {
+        Party party = partyRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("파티가 존재하지 않습니다.")
         );
+        return new PartyDto(party.getId(), party.getMember().getNickname(), party.getRestaurant().getName(),
+                party.getTitle(), party.getCreatedTime(), party.getMatchingStatus(), party.getMaxNumber(), party.getCurrentNumber());
     }
 
     //파티 수정
@@ -83,5 +83,7 @@ public class PartyController {
         partyService.update(id, partyDto.getTitle(), partyDto.getMaxNumber());
         return true;
     }
+
+
 
 }

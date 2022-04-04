@@ -36,3 +36,7 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### YML ###
+mail.yml
+spring.yml

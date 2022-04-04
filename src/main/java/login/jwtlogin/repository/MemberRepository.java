@@ -13,7 +13,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Repository
 @Transactional(readOnly = true)
-public class MemberRepository {
+public class MemberRepository{
 
     private final EntityManager em;
 

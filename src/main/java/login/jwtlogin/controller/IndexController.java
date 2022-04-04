@@ -48,6 +48,7 @@ public class IndexController {
                 .dept(joinDto.getDept())
                 .sno(joinDto.getSno())
                 .reliability(0L)
+                .master(false)
                 .build();
 
         memberRepository.save(member);

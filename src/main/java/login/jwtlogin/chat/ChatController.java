@@ -25,7 +25,7 @@ public class ChatController {
     private final PartyRepository partyRepository;
     private final ChatService chatService;
 
-    // /pub/party/enter 로 요청이 오면, 파티 입장 (환영메시지 전송)
+    // /pub/party/enter 로 요청이 오면, 파티 입장
     @MessageMapping("/party/enter")   // /pub/party/enter
     public void enterChat(@RequestBody Long partyId, @AuthenticationPrincipal PrincipalDetails principalDetails){
         Member member = principalDetails.getMember();

@@ -2,6 +2,7 @@ package login.jwtlogin.auth.email;
 
 import login.jwtlogin.domain.email.VerifyCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,7 @@ public class VerifyCodeRepository {
     public void save(VerifyCode verifyCode) {
         em.persist(verifyCode);
     }
+
 
     public Optional<VerifyCode> find(String code, LocalDateTime now, Boolean expired) {
         return em.createQuery("select v from VerifyCode v where v.code=:code and v.expired = :expired and v.expiredDate >= :expiredDate", VerifyCode.class)
