@@ -25,6 +25,7 @@ public class PrincipalDetailService implements UserDetailsService {
     private final ConfirmationTokenService confirmationTokenService;
     private final VerifyCodeService verifyCodeService;
 
+    //return 될 때, securtiy session에 authentication 객체 넣어줌
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         if (memberRepository.findByLoginId(username).isPresent()) {

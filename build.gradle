@@ -30,11 +30,15 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation group: 'com.auth0', name: 'java-jwt', version: '3.19.0'
+
+	// stmp 메일 인증 관련 의존성
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 
+	// stomp 관련 의존성
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-websocket', version: '2.6.5'
 	implementation group: 'org.springframework', name: 'spring-messaging', version: '5.3.17'
-	//테스트용
+
+	// 테스트용
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
 	implementation 'org.webjars:webjars-locator-core'
@@ -42,6 +46,9 @@ dependencies {
 	implementation 'org.webjars:stomp-websocket:2.3.3'
 	implementation 'org.webjars:bootstrap:3.3.7'
 	implementation 'org.webjars:jquery:3.1.1-1'
+
+	//jwt 인증 예외처리용
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
 }
 
 tasks.named('test') {

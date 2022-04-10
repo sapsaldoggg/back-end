@@ -38,7 +38,7 @@ public class Member {
 
     private Long reliability;
 
-    private Boolean master;
+    private Boolean owner;  //방장여부
 
 
     @ElementCollection
@@ -84,6 +84,10 @@ public class Member {
 
     public void updateGrade() {
         this.roles += ",ROLE_ADMIN";
+    }
+
+    public void updateOwner() {
+        this.owner = true;
     }
 
 

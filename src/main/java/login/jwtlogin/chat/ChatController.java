@@ -26,23 +26,23 @@ public class ChatController {
     private final ChatService chatService;
 
     // /pub/party/enter 로 요청이 오면, 파티 입장
-    @MessageMapping("/party/enter")   // /pub/party/enter
-    public void enterChat(@RequestBody Long partyId, @AuthenticationPrincipal PrincipalDetails principalDetails){
-        Member member = principalDetails.getMember();
-        Party party = partyRepository.findById(partyId).orElseThrow(
-                () -> new IllegalArgumentException("파티가 존재하지 않습니다")
-        );
-        Chat chat = chatService.create(party, member, member.getNickname() + "님이 입장하였습니다.");
-
-        ChatSendDto chatSendDto = ChatSendDto.builder()
-                .partyId(chat.getParty().getId())
-                .sender(chat.getMember().getNickname())
-                .message(chat.getMessage())
-                .sendTime(chat.getSendTime())
-                .build();
-
-        template.convertAndSend("/sub/party/"+partyId, chatSendDto);
-    }
+//    @MessageMapping("/party/enter")   // /pub/party/enter
+//    public void enterChat(@RequestBody Long partyId, @AuthenticationPrincipal PrincipalDetails principalDetails){
+//        Member member = principalDetails.getMember();
+//        Party party = partyRepository.findById(partyId).orElseThrow(
+//                () -> new IllegalArgumentException("파티가 존재하지 않습니다")
+//        );
+//        Chat chat = chatService.create(party, member, member.getNickname() + "님이 입장하였습니다.");
+//
+//        ChatSendDto chatSendDto = ChatSendDto.builder()
+//                .partyId(chat.getParty().getId())
+//                .sender(chat.getMember().getNickname())
+//                .message(chat.getMessage())
+//                .sendTime(chat.getSendTime())
+//                .build();
+//
+//        template.convertAndSend("/sub/party/"+partyId, chatSendDto);
+//    }
 
     // /pub/party/message 로 요청이 오면, 메시지 전송 (SEND)
     @MessageMapping("/party/message")  // /pub/party/message
