@@ -3,4 +3,3 @@ spring:
     import:
       - classpath:/mail.yml
       - classpath:/spring.yml
-#das

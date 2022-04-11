@@ -3,7 +3,7 @@ package login.jwtlogin.controller;
 import login.jwtlogin.auth.PrincipalDetails;
 import login.jwtlogin.controller.partyDto.PartyDto;
 import login.jwtlogin.controller.partyDto.PartyOwnerDto;
-import login.jwtlogin.controller.partyDto.PartyUpdateDto;
+import login.jwtlogin.controller.partyDto.PartyCreateDto;
 import login.jwtlogin.domain.Member;
 import login.jwtlogin.domain.Party;
 import login.jwtlogin.domain.Restaurant;
@@ -37,19 +37,24 @@ public class PartyController {
         log.info("restaurant_id = {}", id);
         Member member = principalDetails.getMember();
 
-        Optional<Party> findParty = partyRepository.findPartyOwnerByMemberId(member);
+        Optional<Party> findParty = partyRepository.findByOwnerNickName(member.getNickname());
 
         Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 식당입니다.")
         );
+
         List<Party> parties = partyRepository.findByRestaurantId(restaurant);
+
         List<PartyDto> partyListDtoList = new ArrayList<>();
 
+
+        //
         for (Party party : parties) {
-            partyListDtoList.add(new PartyDto(party.getId(), party.getMember().getNickname(),
+            partyListDtoList.add(new PartyDto(party.getId(), party.getOwner(),
                     party.getRestaurant().getName(), party.getTitle(), party.getCreatedTime(),
                     party.getMatchingStatus(), party.getMaxNumber(), party.getCurrentNumber()));
         }
+
         return findParty.isPresent() ?
                 new PartyOwnerDto(findParty.get().getId(), partyListDtoList) : new PartyOwnerDto(partyListDtoList);
     }
@@ -57,7 +62,7 @@ public class PartyController {
     //파티 생성
     @PostMapping("/party")
     public Boolean create(@AuthenticationPrincipal PrincipalDetails principalDetails,
-                         @RequestBody PartyUpdateDto partyDto,
+                         @RequestBody PartyCreateDto partyDto,
                          @PathVariable(name = "restaurant_id") Long id) {
         Member member = principalDetails.getMember();
         Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(
@@ -73,13 +78,13 @@ public class PartyController {
         Party party = partyRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("파티가 존재하지 않습니다.")
         );
-        return new PartyDto(party.getId(), party.getMember().getNickname(), party.getRestaurant().getName(),
+        return new PartyDto(party.getId(), party.getMembers().get(0).getNickname(), party.getRestaurant().getName(),
                 party.getTitle(), party.getCreatedTime(), party.getMatchingStatus(), party.getMaxNumber(), party.getCurrentNumber());
     }
 
     //파티 수정
     @PutMapping("/party/{party_id}")
-    public Boolean edit(@RequestBody PartyUpdateDto partyDto, @PathVariable(name = "party_id") Long id) {
+    public Boolean edit(@RequestBody PartyCreateDto partyDto, @PathVariable(name = "party_id") Long id) {
         partyService.update(id, partyDto.getTitle(), partyDto.getMaxNumber());
         return true;
     }

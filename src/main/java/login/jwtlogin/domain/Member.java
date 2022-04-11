@@ -40,19 +40,28 @@ public class Member {
 
     private Boolean owner;  //방장여부
 
+    @JoinColumn(name = "party_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Party party;
 
-    @ElementCollection
-    @CollectionTable(name = "friend" , joinColumns =
-        @JoinColumn(name = "member_id")
-    )
-    private Set<Long> friends = new HashSet<>();
+    // 어쩔 수 없이 set 만듦
+    public void setParty(Party party) {
+        this.party = party;
+    }
 
 
-    @ElementCollection
-    @CollectionTable(name = "favorite_food" , joinColumns =
-    @JoinColumn(name = "member_id")
-    )
-    private List<String> favoriteFoods = new ArrayList<>();
+//    @ElementCollection
+//    @CollectionTable(name = "friend" , joinColumns =
+//        @JoinColumn(name = "member_id")
+//    )
+//    private Set<Long> friends = new HashSet<>();
+//
+//
+//    @ElementCollection
+//    @CollectionTable(name = "favorite_food" , joinColumns =
+//    @JoinColumn(name = "member_id")
+//    )
+//    private List<String> favoriteFoods = new ArrayList<>();
 
 
 //    @OneToMany(mappedBy = "member")

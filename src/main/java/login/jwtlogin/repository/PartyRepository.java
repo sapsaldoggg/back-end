@@ -19,7 +19,7 @@ public class PartyRepository {
 
     private final EntityManager em;
 
-    @Transactional
+
     public void save(Party party) {
         em.persist(party);
     }
@@ -55,6 +55,19 @@ public class PartyRepository {
                 .getResultList()
                 .stream()
                 .findFirst();
+    }
+
+    /**
+     *
+     * @param ownerName : 방장 이름
+     * @return  방장 이름에 해당하는 파티 있을 시, 반환
+     */
+
+    public Optional<Party> findByOwnerNickName(String ownerName) {
+        return em.createQuery("select p from Party p where p.owner = :owner", Party.class)
+                .setParameter("owner", ownerName)
+                .getResultList()
+                .stream().findFirst();
     }
 
 }

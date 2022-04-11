@@ -14,7 +14,7 @@ public class PartyDto {
 
     private Long id;
 
-    private String owner;
+    private String owner;  //방장 닉네임
 
     private String restaurant;
 
