@@ -44,9 +44,12 @@ public class Party {
 
     public static Party create(Member member, Restaurant restaurant, String title, int maxNumber) {
         Party party = new Party();
-
         party.owner = member.getNickname();
+
+        //----------member 관련-----------
         party.addMember(member);
+        member.updateOwner();
+        //-------------------------------
 
         party.restaurant = restaurant;
         party.title = title;
