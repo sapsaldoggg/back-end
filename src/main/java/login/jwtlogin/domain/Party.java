@@ -47,7 +47,8 @@ public class Party {
         party.owner = member.getNickname();
 
         //----------member 관련-----------
-        party.addMember(member);
+        party.members.add(member);
+        member.setParty(party);
         member.updateOwner();
         //-------------------------------
 
