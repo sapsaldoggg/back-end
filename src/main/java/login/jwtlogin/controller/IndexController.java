@@ -9,6 +9,7 @@ import login.jwtlogin.domain.email.VerifyCode;
 import login.jwtlogin.result.ErrorResult;
 import login.jwtlogin.repository.MemberRepository;
 import login.jwtlogin.result.Result;
+import login.jwtlogin.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -27,7 +28,7 @@ import java.util.Optional;
 public class IndexController {
 
     private final MemberRepository memberRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final MemberService memberService;
     private final VerifyCodeService verifyCodeService;
     private final PrincipalDetailService principalDetailService;
 
@@ -35,23 +36,7 @@ public class IndexController {
     @PostMapping("/join")
     public Object join(@Validated @RequestBody JoinDto joinDto) {
         log.info(joinDto.getUniversity().getClass().getName());
-//        Member member = new Member(joinDto.getNickname(), joinDto.getLoginId(), bCryptPasswordEncoder.encode(joinDto.getPassword()),
-//                joinDto.getSex(), joinDto.getEmail(), "ROLE_USER", joinDto.getUniversity(), joinDto.getDept(), joinDto.getSno(), 0L);
-        Member member = Member.builder()
-                .nickname(joinDto.getNickname())
-                .loginId(joinDto.getLoginId())
-                .password(bCryptPasswordEncoder.encode(joinDto.getPassword()))
-                .sex(joinDto.getSex())
-                .roles("ROLE_USER")
-                .email(joinDto.getEmail())
-                .university(joinDto.getUniversity())
-                .dept(joinDto.getDept())
-                .sno(joinDto.getSno())
-                .reliability(0L)
-                .owner(false)      //방장은 기본 false
-                .build();
-
-        memberRepository.save(member);
+        memberService.save(joinDto);
         return true;
     }
 
