@@ -94,25 +94,25 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .withClaim("loginId", principalDetails.getMember().getLoginId())
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
 
-        //response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX+jwtToken);
+        response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX+jwtToken);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-//        LoginResultDto loginResultDto = LoginResultDto.builder()
-//                .token(jwtToken)
-//                .nickname(member.getNickname())
-//                .loginId(member.getLoginId())
-//                .sex(member.getSex())
-//                .university(member.getUniversity())
-//                .dept(member.getDept())
-//                .sno(member.getSno())
-//                .reliability(member.getReliability())
-//                .build();
-
-        String jsonToken = objectMapper.writeValueAsString(new Token(jwtToken));
-        response.setContentType("application/json");
-        response.setCharacterEncoding("utf-8");
-        response.getWriter().write(jsonToken);
-        //body 로 전송하는것으로 수정 ( 토큰 값만 )
+//        ObjectMapper objectMapper = new ObjectMapper();
+////        LoginResultDto loginResultDto = LoginResultDto.builder()
+////                .token(jwtToken)
+////                .nickname(member.getNickname())
+////                .loginId(member.getLoginId())
+////                .sex(member.getSex())
+////                .university(member.getUniversity())
+////                .dept(member.getDept())
+////                .sno(member.getSno())
+////                .reliability(member.getReliability())
+////                .build();
+//
+//        String jsonToken = objectMapper.writeValueAsString(new Token(jwtToken));
+//        response.setContentType("application/json");
+//        response.setCharacterEncoding("utf-8");
+//        response.getWriter().write(jsonToken);
+//        //body 로 전송하는것으로 수정 ( 토큰 값만 )
     }
 
     @Override

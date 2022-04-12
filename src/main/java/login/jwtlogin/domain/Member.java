@@ -40,6 +40,8 @@ public class Member {
 
     private Boolean owner;  //방장여부
 
+    //private Boolean isJoined;  //방 참가 여부(보류)
+
     @JoinColumn(name = "party_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Party party;

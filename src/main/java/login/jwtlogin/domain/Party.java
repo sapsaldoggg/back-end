@@ -70,6 +70,7 @@ public class Party {
     public void addMember(Member member) {
         this.members.add(member);
         member.setParty(this);
+        this.currentNumber++;  //현재인원수 증가
     }
 
     // 매칭상태로 변경
