@@ -50,6 +50,7 @@ public class Party {
         party.members.add(member);
         member.setParty(party);
         member.updateOwner();
+        member.setIsJoined(true);
         //-------------------------------
 
         party.restaurant = restaurant;
@@ -71,13 +72,27 @@ public class Party {
     public void addMember(Member member) {
         this.members.add(member);
         member.setParty(this);
+        member.setIsJoined(true);
         this.currentNumber++;  //현재인원수 증가
+//        if (this.currentNumber == this.maxNumber) {
+//            matched();
+//        }
     }
 
     // 매칭상태로 변경
     public void matched() {
         this.matchingStatus = MatchingStatus.MATCHED;
     }
+
+    // 멤버 삭제
+    public void deleteMember(Member member) {
+        member.setParty(null);
+        member.setIsJoined(false);
+        this.getMembers().remove(member);
+        this.currentNumber--;
+    }
+
+
 
 
 

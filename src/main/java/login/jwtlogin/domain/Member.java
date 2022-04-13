@@ -40,17 +40,25 @@ public class Member {
 
     private Boolean owner;  //방장여부
 
-    //private Boolean isJoined;  //방 참가 여부(보류)
+    private Boolean isJoined;  //방 참가 여부(보류)
 
     @JoinColumn(name = "party_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Party party;
 
-    // 어쩔 수 없이 set 만듦
+    //--------------------------------------------------------------------
     public void setParty(Party party) {
         this.party = party;
     }
 
+    public void setIsJoined(Boolean isJoined) {
+        this.isJoined = isJoined;
+    }
+
+    public void updateOwner() {
+        this.owner = true;
+    }
+    //--------------------------------------------------------------------
 
 //    @ElementCollection
 //    @CollectionTable(name = "friend" , joinColumns =
@@ -93,13 +101,7 @@ public class Member {
         }
     }
 
-    public void updateGrade() {
-        this.roles += ",ROLE_ADMIN";
-    }
 
-    public void updateOwner() {
-        this.owner = true;
-    }
 
 
 

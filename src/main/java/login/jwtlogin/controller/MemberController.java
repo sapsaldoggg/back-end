@@ -3,9 +3,11 @@ package login.jwtlogin.controller;
 import login.jwtlogin.auth.PrincipalDetails;
 import login.jwtlogin.controller.memberDTO.MyPageDto;
 import login.jwtlogin.domain.Member;
+import login.jwtlogin.jwt.JwtAuthorizationFilter;
 import login.jwtlogin.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,6 +52,13 @@ public class MemberController {
                 .reliability(member.getReliability())
                 .build();
         return myPageDto;
+    }
+
+
+    @GetMapping("/test")
+    public void test(@Header(name = "Authorization") String token) {
+
+
     }
 
 

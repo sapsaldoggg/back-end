@@ -27,6 +27,7 @@ public class MemberService {
                 .sno(joinDto.getSno())
                 .reliability(0L)
                 .owner(false)      //방장은 기본 false
+                .isJoined(false)
                 .build();
 
         memberRepository.save(member);

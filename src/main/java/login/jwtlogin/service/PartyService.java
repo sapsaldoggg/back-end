@@ -1,5 +1,6 @@
 package login.jwtlogin.service;
 
+import login.jwtlogin.domain.MatchingStatus;
 import login.jwtlogin.domain.Member;
 import login.jwtlogin.domain.Party;
 import login.jwtlogin.domain.Restaurant;
@@ -32,6 +33,21 @@ public class PartyService {
                 () -> new IllegalArgumentException("파티를 찾을 수 없습니다")
         );
         party.update(title, maxNumber);
+    }
+
+    //파티 참가
+    @Transactional
+    public void join(Party party, Member member) {
+        party.addMember(member);
+    }
+
+    // 파티 나가기
+    @Transactional
+    public void exit(Long id, Member member) {
+        Party party = partyRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("파티를 찾을 수 없습니다")
+        );
+        party.deleteMember(member);
     }
 
 

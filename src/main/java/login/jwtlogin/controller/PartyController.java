@@ -4,14 +4,18 @@ import login.jwtlogin.auth.PrincipalDetails;
 import login.jwtlogin.controller.partyDto.PartyDto;
 import login.jwtlogin.controller.partyDto.PartyOwnerDto;
 import login.jwtlogin.controller.partyDto.PartyCreateDto;
+import login.jwtlogin.domain.MatchingStatus;
 import login.jwtlogin.domain.Member;
 import login.jwtlogin.domain.Party;
 import login.jwtlogin.domain.Restaurant;
+import login.jwtlogin.repository.MemberRepository;
 import login.jwtlogin.repository.PartyRepository;
 import login.jwtlogin.repository.RestaurantRepository;
 import login.jwtlogin.service.PartyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +28,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @RequestMapping("/user/restaurant/{restaurant_id}")
 public class PartyController {
+
+    private final MemberRepository memberRepository;
 
     private final PartyRepository partyRepository;
     private final PartyService partyService;
@@ -65,11 +71,44 @@ public class PartyController {
                          @RequestBody PartyCreateDto partyDto,
                          @PathVariable(name = "restaurant_id") Long id) {
         Member member = principalDetails.getMember();
+        Member findMember = memberRepository.findById(member.getId()).orElseThrow(
+                () -> new IllegalArgumentException("존재하지 않는 회원입니다.")
+        );
         Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 식당입니다.")
         );
-        partyService.create(member, restaurant, partyDto.getTitle(), partyDto.getMaxNumber());
+        partyService.create(findMember, restaurant, partyDto.getTitle(), partyDto.getMaxNumber());
         return true;
+    }
+
+    //파티 참가
+    @PostMapping("/party/{party_id}/join")
+    public Object joinParty(@PathVariable(name = "party_id") Long id, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Member member = principalDetails.getMember();
+        Member findMember = memberRepository.findById(member.getId()).orElseThrow(
+                () -> new IllegalArgumentException("존재하지 않는 회원입니다.")
+        );
+        Party party = partyRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("존재하지 않는 파티입니다.")
+        );
+        if (party.getMaxNumber() == party.getCurrentNumber()) {
+            return new ResponseEntity<>("full", HttpStatus.BAD_REQUEST);
+        }
+        if (member.getIsJoined()) {
+            return new ResponseEntity<>("already joined", HttpStatus.BAD_REQUEST);
+        }
+        partyService.join(party, findMember);
+        return true;
+    }
+
+    //파티 나가기 (방장 제외)
+    @PostMapping("/party/{party_id}/exit")
+    public void exitParty(@PathVariable(name = "party_id") Long id, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Member member = principalDetails.getMember();
+        Member findMember = memberRepository.findById(member.getId()).orElseThrow(
+                () -> new IllegalArgumentException("존재하지 않는 회원입니다.")
+        );
+        partyService.exit(id, findMember);
     }
 
     //파티 입장
@@ -78,7 +117,7 @@ public class PartyController {
         Party party = partyRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("파티가 존재하지 않습니다.")
         );
-        return new PartyDto(party.getId(), party.getMembers().get(0).getNickname(), party.getRestaurant().getName(),
+        return new PartyDto(party.getId(), party.getOwner(), party.getRestaurant().getName(),
                 party.getTitle(), party.getCreatedTime(), party.getMatchingStatus(), party.getMaxNumber(), party.getCurrentNumber());
     }
 
