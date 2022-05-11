@@ -1,18 +1,14 @@
 package login.jwtlogin.controller.partyDto;
 
 import login.jwtlogin.domain.MatchingStatus;
-import login.jwtlogin.domain.Member;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
-
-//파티목록에 필요한 필드만 넣은 dto
-@Data
+@Getter
 @AllArgsConstructor
-public class PartyDto {
+public class PartyInfoDto {
 
     private Long id;
 
@@ -29,6 +25,4 @@ public class PartyDto {
     private Integer maxNumber;
 
     private Integer currentNumber;
-
-    private List<PartyMembersDto> members;
 }

@@ -8,13 +8,13 @@ import java.util.List;
 //파티 목록 반환해주는 dto
 @Data
 @AllArgsConstructor
-public class PartyOwnerDto {
+public class PartyListDto {
 
     private Long partyId;
 
-    private List<PartyDto> parties;
+    private List<PartyInfoDto> parties;
 
-    public PartyOwnerDto(List<PartyDto> parties) {
+    public PartyListDto(List<PartyInfoDto> parties) {
         this.parties = parties;
     }
 }

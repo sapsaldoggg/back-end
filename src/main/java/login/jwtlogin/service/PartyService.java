@@ -21,9 +21,10 @@ public class PartyService {
 
     //파티 생성
     @Transactional  //그래야 멤버도 변경내용 저장됨
-    public void create(Member member, Restaurant restaurant, String title, int maxNumber) {
+    public Party create(Member member, Restaurant restaurant, String title, int maxNumber) {
         Party party = Party.create(member, restaurant, title, maxNumber);
         partyRepository.save(party);
+        return party;
     }
 
     // 파티 수정
