@@ -38,6 +38,9 @@ public class Party {
     @Enumerated(EnumType.STRING)
     private MatchingStatus matchingStatus;
 
+    @Enumerated(EnumType.STRING)
+    private FullStatus fullStatus;
+
     private Integer maxNumber;
 
     private Integer currentNumber;
@@ -57,6 +60,7 @@ public class Party {
         party.title = title;
         party.createdTime = LocalDateTime.now();
         party.matchingStatus = MatchingStatus.NON_MATCHED;
+        party.fullStatus = FullStatus.NON_FULL;
         party.maxNumber = maxNumber;
         party.currentNumber = 1; //방장 포함
         return party;
@@ -74,14 +78,19 @@ public class Party {
         member.setParty(this);
         member.setIsJoined(true);
         this.currentNumber++;  //현재인원수 증가
-//        if (this.currentNumber == this.maxNumber) {
-//            matched();
-//        }
+        if (this.currentNumber == this.maxNumber) {
+            full(); //full 로 변경
+        }
     }
 
-    // 매칭상태로 변경
+    // 매칭상태로 변경(방장이 시작 눌렀을때)
     public void matched() {
         this.matchingStatus = MatchingStatus.MATCHED;
+    }
+
+    //인원 다참 상태 변경
+    public void full() {
+        this.fullStatus = FullStatus.FULL;
     }
 
     // 멤버 삭제

@@ -77,15 +77,7 @@ public class PartyController {
         );
         Party party = partyService.create(findMember, restaurant, partyDto.getTitle(), partyDto.getMaxNumber());
 
-        List<PartyMembersDto> members = new ArrayList<>();
-
-        for (Member partyMember : party.getMembers()) {
-            members.add(new PartyMembersDto(partyMember.getNickname(), partyMember.getSex(), partyMember.getDept(),
-                    partyMember.getSno(), partyMember.getReliability()));
-        }
-        return new PartyDto(party.getId(), party.getOwner(), party.getRestaurant().getName(),
-                party.getTitle(), party.getCreatedTime(), party.getMatchingStatus(), party.getMaxNumber(),
-                party.getCurrentNumber(), members);
+        return partyService.partyInfoReturn(party);
 
     }
 
@@ -107,15 +99,7 @@ public class PartyController {
         }
         partyService.join(party, findMember);
 
-        List<PartyMembersDto> members = new ArrayList<>();
-
-        for (Member partyMember : party.getMembers()) {
-            members.add(new PartyMembersDto(partyMember.getNickname(), partyMember.getSex(), partyMember.getDept(),
-                    partyMember.getSno(), partyMember.getReliability()));
-        }
-        return new PartyDto(party.getId(), party.getOwner(), party.getRestaurant().getName(),
-                party.getTitle(), party.getCreatedTime(), party.getMatchingStatus(), party.getMaxNumber(),
-                party.getCurrentNumber(), members);
+        return partyService.partyInfoReturn(party);
     }
 
     //파티 나가기 (방장 제외)

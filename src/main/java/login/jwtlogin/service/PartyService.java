@@ -1,15 +1,16 @@
 package login.jwtlogin.service;
 
-import login.jwtlogin.domain.MatchingStatus;
-import login.jwtlogin.domain.Member;
-import login.jwtlogin.domain.Party;
-import login.jwtlogin.domain.Restaurant;
+import login.jwtlogin.controller.partyDto.PartyDto;
+import login.jwtlogin.controller.partyDto.PartyMembersDto;
+import login.jwtlogin.domain.*;
 import login.jwtlogin.repository.PartyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -40,6 +41,9 @@ public class PartyService {
     @Transactional
     public void join(Party party, Member member) {
         party.addMember(member);
+        if (party.getFullStatus() == FullStatus.FULL) {
+            throw new IllegalArgumentException("파티가 가득 찼습니다.");
+        }
     }
 
     // 파티 나가기
@@ -49,6 +53,18 @@ public class PartyService {
                 () -> new IllegalArgumentException("파티를 찾을 수 없습니다")
         );
         party.deleteMember(member);
+    }
+
+    public PartyDto partyInfoReturn(Party party) {
+        List<PartyMembersDto> members = new ArrayList<>();
+
+        for (Member partyMember : party.getMembers()) {
+            members.add(new PartyMembersDto(partyMember.getNickname(), partyMember.getSex(), partyMember.getDept(),
+                    partyMember.getSno(), partyMember.getReliability()));
+        }
+        return new PartyDto(party.getId(), party.getOwner(), party.getRestaurant().getName(),
+                party.getTitle(), party.getCreatedTime(), party.getMatchingStatus(), party.getMaxNumber(),
+                party.getCurrentNumber(), members);
     }
 
 
