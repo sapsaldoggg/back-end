@@ -41,9 +41,6 @@ public class PartyService {
     @Transactional
     public void join(Party party, Member member) {
         party.addMember(member);
-        if (party.getFullStatus() == FullStatus.FULL) {
-            throw new IllegalArgumentException("파티가 가득 찼습니다.");
-        }
     }
 
     // 파티 나가기

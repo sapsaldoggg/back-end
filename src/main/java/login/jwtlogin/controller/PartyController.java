@@ -2,6 +2,7 @@ package login.jwtlogin.controller;
 
 import login.jwtlogin.auth.PrincipalDetails;
 import login.jwtlogin.controller.partyDto.*;
+import login.jwtlogin.domain.FullStatus;
 import login.jwtlogin.domain.Member;
 import login.jwtlogin.domain.Party;
 import login.jwtlogin.domain.Restaurant;
@@ -65,7 +66,7 @@ public class PartyController {
 
     //파티 생성
     @PostMapping("/party")
-    public PartyDto create(@AuthenticationPrincipal PrincipalDetails principalDetails,
+    public Object create(@AuthenticationPrincipal PrincipalDetails principalDetails,
                          @RequestBody PartyCreateDto partyDto,
                          @PathVariable(name = "restaurant_id") Long id) {
         Member member = principalDetails.getMember();
@@ -75,6 +76,9 @@ public class PartyController {
         Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 식당입니다.")
         );
+        if (findMember.getIsJoined() == true) {
+            return new ResponseEntity<>("이미 파티에 소속되어 있습니다", HttpStatus.BAD_REQUEST);
+        }
         Party party = partyService.create(findMember, restaurant, partyDto.getTitle(), partyDto.getMaxNumber());
 
         return partyService.partyInfoReturn(party);
@@ -91,7 +95,7 @@ public class PartyController {
         Party party = partyRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 파티입니다.")
         );
-        if (party.getMaxNumber() == party.getCurrentNumber()) {
+        if (party.getFullStatus() == FullStatus.FULL) {
             return new ResponseEntity<>("full", HttpStatus.BAD_REQUEST);
         }
         if (member.getIsJoined()) {
