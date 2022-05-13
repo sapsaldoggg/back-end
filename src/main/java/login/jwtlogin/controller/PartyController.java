@@ -117,14 +117,13 @@ public class PartyController {
     }
 
     //파티 입장
-//    @GetMapping("/party/{party_id}")
-//    public PartyDto enter(@PathVariable(name = "party_id") Long id) {
-//        Party party = partyRepository.findById(id).orElseThrow(
-//                () -> new IllegalArgumentException("파티가 존재하지 않습니다.")
-//        );
-//        return new PartyDto(party.getId(), party.getOwner(), party.getRestaurant().getName(),
-//                party.getTitle(), party.getCreatedTime(), party.getMatchingStatus(), party.getMaxNumber(), party.getCurrentNumber());
-//    }
+    @GetMapping("/party/{party_id}")
+    public PartyDto enter(@PathVariable(name = "party_id") Long id) {
+        Party party = partyRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("파티가 존재하지 않습니다.")
+        );
+        return partyService.partyInfoReturn(party);
+    }
 
     //파티 수정
     @PutMapping("/party/{party_id}")
