@@ -20,7 +20,11 @@ public class EmbeddedRedisConfig {
 
     @PostConstruct
     public void redisServer() throws IOException {
-        redisServer = new RedisServer(redisPort);
+        redisServer = RedisServer.builder()
+                .port(redisPort)
+                //.redisExecProvider(customRedisExec) //com.github.kstyrc (not com.orange.redis-embedded)
+                .setting("maxmemory 128M") //maxheap 128M
+                .build();
         redisServer.start();
     }
 
