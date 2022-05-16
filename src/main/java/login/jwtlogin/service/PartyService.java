@@ -39,8 +39,13 @@ public class PartyService {
 
     //파티 참가
     @Transactional
-    public void join(Party party, Member member) {
+    public Party join(Party party, Member member) {
+        if (party.getFullStatus() == FullStatus.FULL || member.getIsJoined() || party.getMatchingStatus() == MatchingStatus.MATCHED) {
+            return null;
+        }
         party.addMember(member);
+//        log.info("join (party) = {}", party);
+        return party;
     }
 
     // 파티 나가기
@@ -52,6 +57,46 @@ public class PartyService {
         party.deleteMember(member);
     }
 
+    @Transactional
+    public void startOrReady(Party party, Member member) {
+        if (member.getOwner() == true){  //방장인 경우
+            if (member.getIsReady() == true) {  // 파티 시작 취소
+                party.startCancelParty(member);
+            }else{  // 파티 시작
+                if (party.getMembers().size() >= 2) {  // 방장 포함 인원수 2 이상일때 가능
+                    if (readyStatus(party) == true){
+                        party.startParty(member);
+                    }else{
+                        throw new IllegalArgumentException("모두 준비 상태여야 합니다.");
+                    }
+                }else{
+                    throw new IllegalArgumentException("파티원이 2명 미만입니다.");
+                }
+            }
+        }else{      // 방장 아닌 경우
+            if (member.getIsReady() == true) {  //파티 준비 취소
+                if (party.getMatchingStatus() == MatchingStatus.MATCHED) {  //이미 시작이 된 경우
+                    throw new IllegalArgumentException("파티가 이미 시작되었습니다.");
+                }else{  //파티 준비 취소 작업 가능
+                    party.cancelReady(member);
+                }
+            }else{  //파티 준비 작업
+                party.ready(member);
+            }
+        }
+    }
+
+    //파티원이 모두 준비상태인지 확인 메소드
+    public Boolean readyStatus(Party party) {
+        for (Member member : party.getMembers()) {
+            if (member.getIsReady() == false) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    //파티생성, 참가 시 파티정보(참가자 목록) 반환 메소드
     public PartyDto partyInfoReturn(Party party) {
         List<PartyMembersDto> members = new ArrayList<>();
 

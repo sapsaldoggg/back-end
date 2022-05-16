@@ -28,6 +28,7 @@ public class MemberService {
                 .reliability(0L)
                 .owner(false)      //방장은 기본 false
                 .isJoined(false)
+                .isReady(false)
                 .build();
 
         memberRepository.save(member);

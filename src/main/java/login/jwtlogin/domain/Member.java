@@ -42,7 +42,9 @@ public class Member {
 
     private Boolean isJoined;  //방 참가 여부(보류)
 
-    @JoinColumn(name = "party_id")
+    private Boolean isReady;  //준비 상태 및 시작 여부
+
+   @JoinColumn(name = "party_id")
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Party party;
 
@@ -55,8 +57,12 @@ public class Member {
         this.isJoined = isJoined;
     }
 
-    public void updateOwner() {
-        this.owner = true;
+    public void setOwner(Boolean owner) {
+        this.owner = owner;
+    }
+
+    public void setIsReady(Boolean isReady) {
+        this.isReady = isReady;
     }
     //--------------------------------------------------------------------
 

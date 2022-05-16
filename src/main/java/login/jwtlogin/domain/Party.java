@@ -52,7 +52,7 @@ public class Party {
         //----------member 관련-----------
         party.members.add(member);
         member.setParty(party);
-        member.updateOwner();
+        member.setOwner(true);
         member.setIsJoined(true);
         //-------------------------------
 
@@ -93,12 +93,39 @@ public class Party {
         this.fullStatus = FullStatus.FULL;
     }
 
+    public void nonFull() {
+        this.fullStatus = FullStatus.NON_FULL;
+    }
+
     // 멤버 삭제
     public void deleteMember(Member member) {
         member.setParty(null);
         member.setIsJoined(false);
         this.getMembers().remove(member);
         this.currentNumber--;
+        nonFull();
+    }
+
+    //파티 시작취소
+    public void startCancelParty(Member member) {
+        member.setIsReady(false);
+        this.matchingStatus = MatchingStatus.NON_MATCHED;
+    }
+
+    //파티 시작
+    public void startParty(Member member) {
+        member.setIsReady(true);
+        this.matchingStatus = MatchingStatus.MATCHED;
+    }
+
+    //준비완료
+    public void ready(Member member) {
+        member.setIsReady(true);
+    }
+
+    //준비취소
+    public void cancelReady(Member member) {
+        member.setIsReady(false);
     }
 
 

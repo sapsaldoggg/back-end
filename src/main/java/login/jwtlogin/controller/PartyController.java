@@ -95,18 +95,15 @@ public class PartyController {
         Party party = partyRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 파티입니다.")
         );
-        if (party.getFullStatus() == FullStatus.FULL) {
-            return new ResponseEntity<>("full", HttpStatus.BAD_REQUEST);
-        }
-        if (member.getIsJoined()) {
-            return new ResponseEntity<>("already joined", HttpStatus.BAD_REQUEST);
+
+        if (partyService.join(party, findMember) == null) {
+            return new ResponseEntity<Boolean>(false, HttpStatus.BAD_REQUEST);
         }
         partyService.join(party, findMember);
-
         return partyService.partyInfoReturn(party);
     }
 
-    //파티 나가기 (방장 제외)
+    //파티 나가기 (방장도 포함해서 작성 예정)
     @PostMapping("/party/{party_id}/exit")
     public void exitParty(@PathVariable(name = "party_id") Long id, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Member member = principalDetails.getMember();
@@ -131,6 +128,25 @@ public class PartyController {
         partyService.update(id, partyDto.getTitle(), partyDto.getMaxNumber());
         return true;
     }
+
+    //파티 준비 or 시작
+    @PostMapping("/party/{party_id}/ready")
+    public void ready(@PathVariable("party_id") Long id, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Member member = principalDetails.getMember();
+        Member findMember = memberRepository.findById(member.getId()).orElseThrow(
+                () -> new IllegalArgumentException("존재하지 않는 회원입니다.")
+        );
+        Party party = partyRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("파티가 존재하지 않습니다.")
+        );
+        partyService.startOrReady(party, findMember);
+    }
+
+    //파티 삭제 (방장만 가능)
+//    @DeleteMapping("/party/{party_id}")
+//    public void deleteParty() {
+//
+//    }
 
 
 //
