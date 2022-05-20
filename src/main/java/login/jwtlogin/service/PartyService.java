@@ -48,12 +48,17 @@ public class PartyService {
         return party;
     }
 
-    // 파티 나가기
+    // 파티 나가기 (멤버만 가능, 방장x)
     @Transactional
     public void exit(Long id, Member member) {
         Party party = partyRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("파티를 찾을 수 없습니다")
         );
+        if (party.getMatchingStatus() == MatchingStatus.MATCHED) {
+            throw new IllegalArgumentException("이미 파티가 매칭되었습니다.");
+        } else if (member.getIsReady() == true) {
+            throw new IllegalArgumentException("준비상태에서 파티를 나갈 수 없습니다.");
+        }
         party.deleteMember(member);
     }
 
@@ -86,9 +91,12 @@ public class PartyService {
         }
     }
 
-    //파티원이 모두 준비상태인지 확인 메소드
+    //파티원이 모두 준비상태인지 확인 메소드 (방장을 제외한)
     public Boolean readyStatus(Party party) {
         for (Member member : party.getMembers()) {
+            if (member.getOwner() == true) {
+                continue;
+            }
             if (member.getIsReady() == false) {
                 return false;
             }

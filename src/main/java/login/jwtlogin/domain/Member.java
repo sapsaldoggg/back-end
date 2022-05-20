@@ -44,7 +44,7 @@ public class Member {
 
     private Boolean isReady;  //준비 상태 및 시작 여부
 
-   @JoinColumn(name = "party_id")
+    @JoinColumn(name = "party_id")
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Party party;
 

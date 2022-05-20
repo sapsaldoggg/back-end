@@ -1,12 +1,10 @@
-package login.jwtlogin.controller.memberDTO;
+package login.jwtlogin.controller.memberDto;
 
 
 import lombok.Data;
-import lombok.NonNull;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Data
 public class JoinDto {

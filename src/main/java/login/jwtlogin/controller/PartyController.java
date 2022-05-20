@@ -103,7 +103,7 @@ public class PartyController {
         return partyService.partyInfoReturn(party);
     }
 
-    //파티 나가기 (방장도 포함해서 작성 예정)
+    //파티 나가기 (멤버만 가능, 방장 x)
     @PostMapping("/party/{party_id}/exit")
     public void exitParty(@PathVariable(name = "party_id") Long id, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Member member = principalDetails.getMember();

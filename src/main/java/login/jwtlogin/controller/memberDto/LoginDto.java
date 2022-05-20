@@ -1,6 +1,5 @@
-package login.jwtlogin.controller.memberDTO;
+package login.jwtlogin.controller.memberDto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 

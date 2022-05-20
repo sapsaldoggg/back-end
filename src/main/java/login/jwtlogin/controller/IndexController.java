@@ -2,19 +2,14 @@ package login.jwtlogin.controller;
 
 import login.jwtlogin.auth.PrincipalDetailService;
 import login.jwtlogin.auth.email.VerifyCodeService;
-import login.jwtlogin.controller.memberDTO.JoinDto;
-import login.jwtlogin.controller.memberDTO.MyPageDto;
-import login.jwtlogin.domain.Member;
+import login.jwtlogin.controller.memberDto.JoinDto;
 import login.jwtlogin.domain.email.VerifyCode;
-import login.jwtlogin.result.ErrorResult;
 import login.jwtlogin.repository.MemberRepository;
-import login.jwtlogin.result.Result;
 import login.jwtlogin.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 

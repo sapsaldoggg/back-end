@@ -1,6 +1,6 @@
 package login.jwtlogin.service;
 
-import login.jwtlogin.controller.memberDTO.JoinDto;
+import login.jwtlogin.controller.memberDto.JoinDto;
 import login.jwtlogin.domain.Member;
 import login.jwtlogin.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;

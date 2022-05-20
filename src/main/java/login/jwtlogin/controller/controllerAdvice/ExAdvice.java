@@ -48,7 +48,7 @@ public class ExAdvice {
     // 조회 실패 시 - Illegal exception -> 400 으로 변환해서 예외처리
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Boolean error(IllegalArgumentException e) {
-        return false;
+    public ErrorResult error(IllegalArgumentException e) {
+        return new ErrorResult("BAD_REQUEST", e.getMessage());
     }
 }

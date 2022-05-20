@@ -1,7 +1,9 @@
 package login.jwtlogin.controller;
 
+import login.jwtlogin.controller.restaurantDto.RestaurantListDto;
 import login.jwtlogin.domain.Restaurant;
 import login.jwtlogin.repository.RestaurantRepository;
+import login.jwtlogin.service.RestaurantService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,12 +18,12 @@ import java.util.List;
 @RequestMapping("/user")
 public class RestaurantController {
 
-    private final RestaurantRepository restaurantRepository;
+    private final RestaurantService restaurantService;
 
     //식당 조회 (메인페이지 예상 - 지도 화면)
     @GetMapping("/restaurants")
-    public List<Restaurant> restaurantList() {
-        return restaurantRepository.findAll();
+    public List<RestaurantListDto> restaurantList() {
+        return restaurantService.restaurantList();
     }
 
 }

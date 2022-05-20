@@ -1,4 +1,4 @@
-package login.jwtlogin.controller.memberDTO;
+package login.jwtlogin.controller.memberDto;
 
 import lombok.Builder;
 import lombok.Getter;
