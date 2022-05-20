@@ -40,3 +40,4 @@ out/
 ### YML ###
 mail.yml
 spring.yml
+redis.yml
