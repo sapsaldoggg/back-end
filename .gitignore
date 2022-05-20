@@ -37,7 +37,7 @@ out/
 ### VS Code ###
 .vscode/
 
-### YML ###
+### YML ####
 mail.yml
 spring.yml
 redis.yml
