@@ -118,7 +118,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        String error_json = objectMapper.writeValueAsString(new ErrorResult("LOGIN_FAIL", "로그인에 실패했습니다"));
+        String error_json = objectMapper.writeValueAsString(new ErrorResult("로그인에 실패했습니다"));
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
         response.setStatus(400);

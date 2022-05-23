@@ -66,10 +66,11 @@ public class Party {
         return party;
     }
 
-    // 이거는 뭐였지??
-    public void update(String title, int maxNumber) {
+    // 파티 수정
+    public Party update(String title, int maxNumber) {
         this.title = title;
         this.maxNumber = maxNumber;
+        return this;
     }
 
     //파티에 멤버 추가

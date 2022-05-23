@@ -1,11 +1,15 @@
 package login.jwtlogin.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Getter
 @Entity
+@NoArgsConstructor
 public class Restaurant {
 
     @Id @GeneratedValue
@@ -21,5 +25,10 @@ public class Restaurant {
     private double longtitude;   //경도
 
     private double latitude;    //위도
+
+    @Builder
+    public Restaurant(String name) {
+        this.name = name;
+    }
 
 }

@@ -1,5 +1,7 @@
 package login.jwtlogin.service;
 
+import login.jwtlogin.controller.exception.ExitException;
+import login.jwtlogin.controller.exception.StartOrReadyException;
 import login.jwtlogin.controller.partyDto.PartyDto;
 import login.jwtlogin.controller.partyDto.PartyMembersDto;
 import login.jwtlogin.domain.*;
@@ -9,9 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -21,7 +23,7 @@ public class PartyService {
     private final PartyRepository partyRepository;
 
     //파티 생성
-    @Transactional  //그래야 멤버도 변경내용 저장됨
+    @Transactional
     public Party create(Member member, Restaurant restaurant, String title, int maxNumber) {
         Party party = Party.create(member, restaurant, title, maxNumber);
         partyRepository.save(party);
@@ -32,7 +34,7 @@ public class PartyService {
     @Transactional
     public void update(Long id, String title, int maxNumber) {
         Party party = partyRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("파티를 찾을 수 없습니다")
+                () -> new EntityNotFoundException("파티를 찾을 수 없습니다")
         );
         party.update(title, maxNumber);
     }
@@ -52,12 +54,14 @@ public class PartyService {
     @Transactional
     public void exit(Long id, Member member) {
         Party party = partyRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("파티를 찾을 수 없습니다")
+                () -> new EntityNotFoundException("파티를 찾을 수 없습니다")
         );
-        if (party.getMatchingStatus() == MatchingStatus.MATCHED) {
-            throw new IllegalArgumentException("이미 파티가 매칭되었습니다.");
+        if (member.getOwner() == true) {
+            throw new ExitException("방장은 나갈수 없습니다.");
+        } else if (party.getMatchingStatus() == MatchingStatus.MATCHED) {
+            throw new ExitException("이미 파티가 매칭되었습니다.");
         } else if (member.getIsReady() == true) {
-            throw new IllegalArgumentException("준비상태에서 파티를 나갈 수 없습니다.");
+            throw new ExitException("준비상태에서 파티를 나갈 수 없습니다.");
         }
         party.deleteMember(member);
     }
@@ -72,16 +76,16 @@ public class PartyService {
                     if (readyStatus(party) == true){
                         party.startParty(member);
                     }else{
-                        throw new IllegalArgumentException("모두 준비 상태여야 합니다.");
+                        throw new StartOrReadyException("모두 준비 상태여야 합니다.");
                     }
                 }else{
-                    throw new IllegalArgumentException("파티원이 2명 미만입니다.");
+                    throw new StartOrReadyException("파티원이 2명 미만입니다.");
                 }
             }
         }else{      // 방장 아닌 경우
             if (member.getIsReady() == true) {  //파티 준비 취소
                 if (party.getMatchingStatus() == MatchingStatus.MATCHED) {  //이미 시작이 된 경우
-                    throw new IllegalArgumentException("파티가 이미 시작되었습니다.");
+                    throw new StartOrReadyException("파티가 이미 시작되었습니다.");
                 }else{  //파티 준비 취소 작업 가능
                     party.cancelReady(member);
                 }

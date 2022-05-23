@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -45,7 +46,7 @@ public class PartyController {
         Optional<Party> findParty = partyRepository.findByOwnerNickName(member.getNickname());
 
         Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 식당입니다.")
+                () -> new EntityNotFoundException("존재하지 않는 식당입니다.")
         );
 
         List<Party> parties = partyRepository.findByRestaurantId(restaurant);
@@ -71,10 +72,10 @@ public class PartyController {
                          @PathVariable(name = "restaurant_id") Long id) {
         Member member = principalDetails.getMember();
         Member findMember = memberRepository.findById(member.getId()).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 회원입니다.")
+                () -> new EntityNotFoundException("존재하지 않는 회원입니다.")
         );
         Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 식당입니다.")
+                () -> new EntityNotFoundException("존재하지 않는 식당입니다.")
         );
         if (findMember.getIsJoined() == true) {
             return new ResponseEntity<>("이미 파티에 소속되어 있습니다", HttpStatus.BAD_REQUEST);
@@ -90,10 +91,10 @@ public class PartyController {
     public Object joinParty(@PathVariable(name = "party_id") Long id, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Member member = principalDetails.getMember();
         Member findMember = memberRepository.findById(member.getId()).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 회원입니다.")
+                () -> new EntityNotFoundException("존재하지 않는 회원입니다.")
         );
         Party party = partyRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 파티입니다.")
+                () -> new EntityNotFoundException("존재하지 않는 파티입니다.")
         );
 
         if (partyService.join(party, findMember) == null) {
@@ -108,7 +109,7 @@ public class PartyController {
     public void exitParty(@PathVariable(name = "party_id") Long id, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Member member = principalDetails.getMember();
         Member findMember = memberRepository.findById(member.getId()).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 회원입니다.")
+                () -> new EntityNotFoundException("존재하지 않는 회원입니다.")
         );
         partyService.exit(id, findMember);
     }
@@ -117,7 +118,7 @@ public class PartyController {
     @GetMapping("/party/{party_id}")
     public PartyDto enter(@PathVariable(name = "party_id") Long id) {
         Party party = partyRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("파티가 존재하지 않습니다.")
+                () -> new EntityNotFoundException("파티가 존재하지 않습니다.")
         );
         return partyService.partyInfoReturn(party);
     }
@@ -134,10 +135,10 @@ public class PartyController {
     public void ready(@PathVariable("party_id") Long id, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Member member = principalDetails.getMember();
         Member findMember = memberRepository.findById(member.getId()).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 회원입니다.")
+                () -> new EntityNotFoundException("존재하지 않는 회원입니다.")
         );
         Party party = partyRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("파티가 존재하지 않습니다.")
+                () -> new EntityNotFoundException("파티가 존재하지 않습니다.")
         );
         partyService.startOrReady(party, findMember);
     }

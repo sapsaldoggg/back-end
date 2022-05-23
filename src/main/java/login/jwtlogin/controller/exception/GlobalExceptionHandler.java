@@ -1,4 +1,4 @@
-package login.jwtlogin.controller.controllerAdvice;
+package login.jwtlogin.controller.exception;
 
 
 import login.jwtlogin.result.ErrorResult;
@@ -10,11 +10,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
 @RestControllerAdvice
-public class ExAdvice {
+public class GlobalExceptionHandler {
 
     /**
      * 1) bean validation 오류
@@ -26,13 +27,11 @@ public class ExAdvice {
     public List<ErrorResult> error(MethodArgumentNotValidException e) {
         List<ErrorResult> errorList = new ArrayList<>();
 
-        String code = "";
         String message = "";
 
         for (ObjectError error : e.getBindingResult().getAllErrors()) {
-            code = error.getCode();
             message = error.getDefaultMessage();
-            errorList.add(new ErrorResult(code, message));
+            errorList.add(new ErrorResult(message));
         }
         return errorList;
     }
@@ -41,14 +40,25 @@ public class ExAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResult error(HttpMessageNotReadableException e) {
 
-        return new ErrorResult("JOIN_TYPE_ERROR", "타입이 맞지 않습니다");
+        return new ErrorResult("타입이 맞지 않습니다");
     }
 
-    //------------------------------------------------------------------
-    // 조회 실패 시 - Illegal exception -> 400 으로 변환해서 예외처리
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResult error(IllegalArgumentException e) {
-        return new ErrorResult("BAD_REQUEST", e.getMessage());
+    public ErrorResult handleEntityNotFoundException(EntityNotFoundException e) {
+        return new ErrorResult(e.getMessage());
+    }
+
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResult handleIllegalStateException(IllegalStateException e) {
+        return new ErrorResult(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResult handleDropTheCodeException(DropTheCodeException e) {
+        return new ErrorResult(e.getMessage());
     }
 }

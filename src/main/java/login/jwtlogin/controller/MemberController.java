@@ -10,6 +10,8 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
+
 @RequiredArgsConstructor
 @RestController
 @Slf4j
@@ -38,7 +40,7 @@ public class MemberController {
     @GetMapping("/{member_id}")
     public MyPageDto memberInfo(@PathVariable(name = "member_id") Long id) {
         Member member = memberRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 회원입니다")
+                () -> new EntityNotFoundException("존재하지 않는 회원입니다")
         );
         MyPageDto myPageDto = MyPageDto.builder()
                 .nickname(member.getNickname())
