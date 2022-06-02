@@ -1,5 +1,6 @@
 package login.jwtlogin.service;
 
+import login.jwtlogin.controller.exception.ExceptionMessages;
 import login.jwtlogin.controller.exception.ExitException;
 import login.jwtlogin.controller.exception.StartOrReadyException;
 import login.jwtlogin.controller.partyDto.PartyDto;
@@ -11,7 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +25,7 @@ import java.util.List;
 public class PartyService {
 
     private final PartyRepository partyRepository;
+    private final EntityManager entityManager;
 
     //파티 생성
     @Transactional
@@ -34,7 +39,7 @@ public class PartyService {
     @Transactional
     public void update(Long id, String title, int maxNumber) {
         Party party = partyRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("파티를 찾을 수 없습니다")
+                () -> new EntityNotFoundException(ExceptionMessages.NOTFOUND_PARTY)
         );
         party.update(title, maxNumber);
     }
@@ -54,7 +59,7 @@ public class PartyService {
     @Transactional
     public void exit(Long id, Member member) {
         Party party = partyRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("파티를 찾을 수 없습니다")
+                () -> new EntityNotFoundException(ExceptionMessages.NOTFOUND_PARTY)
         );
         if (member.getOwner() == true) {
             throw new ExitException("방장은 나갈수 없습니다.");
@@ -119,6 +124,37 @@ public class PartyService {
         return new PartyDto(party.getId(), party.getOwner(), party.getRestaurant().getName(),
                 party.getTitle(), party.getCreatedTime(), party.getMatchingStatus(), party.getMaxNumber(),
                 party.getCurrentNumber(), members);
+    }
+
+
+    //파티 삭제 (방장 권한)
+    @Transactional
+    public void initialMembers(Party party) {
+        for (Member member : party.getMembers()) {
+            if (member.getOwner() == true) {
+                member.setOwner(false);
+            }
+            member.setParty(null);
+            member.setIsJoined(false);
+            member.setIsReady(false);
+        }
+        party.getMembers().clear();
+        partyRepository.removeParty(party);
+    }
+
+    @Transactional
+    public void removePartyScheduler() {
+        log.info("----------------스케줄러 실행----------------");
+        List<Party> parties = partyRepository.findAll();
+        for (Party party : parties) {
+            if (party.getMatchingStatus() == MatchingStatus.MATCHED) {
+                Duration duration = Duration.between(party.getMatchingStartTime(), LocalDateTime.now());
+                log.info("시간:"+String.valueOf(duration.getSeconds()));
+                if (duration.getSeconds() >= 7200) {   //2시간 지나면
+                    initialMembers(party);
+                }
+            }
+        }
     }
 
 

@@ -70,4 +70,10 @@ public class PartyRepository {
                 .stream().findFirst();
     }
 
+
+    //파티 삭제
+    public void removeParty(Party party) {
+        em.remove(party);
+    }
+
 }

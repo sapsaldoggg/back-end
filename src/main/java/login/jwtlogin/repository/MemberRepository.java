@@ -17,7 +17,6 @@ public class MemberRepository{
 
     private final EntityManager em;
 
-    @Transactional
     public void save(Member member) {
         em.persist(member);
     }
@@ -44,6 +43,12 @@ public class MemberRepository{
                 .setParameter("nickname", nickname)
                 .getResultList()
                 .stream().findFirst();
+    }
+
+    //파티 삭제
+    @Transactional
+    public void remove(Member member) {
+        em.remove(member);
     }
 
 

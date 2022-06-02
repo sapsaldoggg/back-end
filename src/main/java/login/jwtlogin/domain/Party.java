@@ -2,15 +2,17 @@ package login.jwtlogin.domain;
 
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import javax.persistence.*;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
-public class Party {
+public class Party extends BaseEntity{
 
     @Id
     @GeneratedValue
@@ -44,6 +46,9 @@ public class Party {
     private Integer maxNumber;
 
     private Integer currentNumber;
+
+    // 매칭됬을때, 시간
+    private LocalDateTime matchingStartTime;
 
     public static Party create(Member member, Restaurant restaurant, String title, int maxNumber) {
         Party party = new Party();
@@ -98,7 +103,7 @@ public class Party {
         this.fullStatus = FullStatus.NON_FULL;
     }
 
-    // 멤버 삭제
+    // 멤버 삭제 (방장제외)
     public void deleteMember(Member member) {
         member.setParty(null);
         member.setIsJoined(false);
@@ -117,6 +122,7 @@ public class Party {
     public void startParty(Member member) {
         member.setIsReady(true);
         this.matchingStatus = MatchingStatus.MATCHED;
+        this.matchingStartTime = LocalDateTime.now();
     }
 
     //준비완료
@@ -128,9 +134,6 @@ public class Party {
     public void cancelReady(Member member) {
         member.setIsReady(false);
     }
-
-
-
 
 
 

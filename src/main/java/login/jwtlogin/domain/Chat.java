@@ -1,6 +1,7 @@
 package login.jwtlogin.domain;
 
 import lombok.Getter;
+import org.apache.tomcat.jni.Local;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
@@ -8,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-public class Chat {
+public class Chat extends BaseEntity{
 
     @Id
     @GeneratedValue
@@ -25,8 +26,6 @@ public class Chat {
 
     private String message;
 
-    @CreatedDate
-    @Column(updatable = false)
     private LocalDateTime sendTime;
 
     public static Chat create(Party party, Member member, String message) {
@@ -34,7 +33,6 @@ public class Chat {
         chat.party = party;
         chat.member = member;
         chat.message = message;
-        chat.sendTime = LocalDateTime.now();
         return chat;
     }
 }

@@ -4,3 +4,5 @@ spring:
       - classpath:/mail.yml
       - classpath:/spring.yml
       - classpath:/redis.yml
+  messages:
+    basename: messages

@@ -1,65 +1,37 @@
 package login.jwtlogin.controller;
 
 import login.jwtlogin.auth.PrincipalDetails;
+import login.jwtlogin.controller.exception.ExceptionMessages;
 import login.jwtlogin.controller.memberDto.MyPageDto;
 import login.jwtlogin.domain.Member;
 import login.jwtlogin.repository.MemberRepository;
+import login.jwtlogin.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.persistence.EntityNotFoundException;
 
-@RequiredArgsConstructor
-@RestController
 @Slf4j
+@RestController
+@RequiredArgsConstructor
 @RequestMapping("/user")
 public class MemberController {
 
-    private MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
-    //회원 정보 (마이페이지)
     @GetMapping
-    public MyPageDto detail(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public ResponseEntity myPage(@AuthenticationPrincipal PrincipalDetails principalDetails) {
         Member member = principalDetails.getMember();
-        MyPageDto myPageDto = MyPageDto.builder()
-                .nickname(member.getNickname())
-                .sex(member.getSex())
-                .university(member.getUniversity())
-                .dept(member.getDept())
-                .sno(member.getSno())
-                .reliability(member.getReliability())
-                .build();
-
-        return myPageDto;
-    }
-
-    //다른 회원들 정보 조회 ( ex) 파티멤버 클릭시 해당 멤버 정보 확인 )
-    @GetMapping("/{member_id}")
-    public MyPageDto memberInfo(@PathVariable(name = "member_id") Long id) {
-        Member member = memberRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("존재하지 않는 회원입니다")
+        Member findMember = memberRepository.findById(member.getId()).orElseThrow(
+                () -> new EntityNotFoundException(ExceptionMessages.NOT_FOUND_MEMBER)
         );
-        MyPageDto myPageDto = MyPageDto.builder()
-                .nickname(member.getNickname())
-                .sex(member.getSex())
-                .university(member.getUniversity())
-                .dept(member.getDept())
-                .sno(member.getSno())
-                .reliability(member.getReliability())
-                .build();
-        return myPageDto;
+        MyPageDto my = memberService.detail(findMember);
+        return ResponseEntity.ok(my);
     }
-
-
-    @GetMapping("/test")
-    public void test(@Header(name = "Authorization") String token) {
-
-
-    }
-
-
-
 }
