@@ -3,6 +3,7 @@ package login.jwtlogin.chat;
 import login.jwtlogin.auth.PrincipalDetails;
 import login.jwtlogin.chat.chatDto.ChatDto;
 import login.jwtlogin.chat.chatDto.ChatSendDto;
+import login.jwtlogin.controller.exception.ExceptionMessages;
 import login.jwtlogin.domain.Chat;
 import login.jwtlogin.domain.Member;
 import login.jwtlogin.domain.Party;
@@ -49,7 +50,7 @@ public class ChatController {
     public void messageChat(@RequestBody ChatDto chatDto, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Member member = principalDetails.getMember();
         Party party = partyRepository.findById(chatDto.getPartyId()).orElseThrow(
-                () -> new IllegalArgumentException("파티가 존재하지 않습니다")
+                () -> new IllegalArgumentException(ExceptionMessages.NOTFOUND_PARTY)
         );
         Chat chat = chatService.create(party, member, chatDto.getMessage());
 
@@ -60,6 +61,6 @@ public class ChatController {
                 .sendTime(chat.getSendTime())
                 .build();
 
-        template.convertAndSend("/sub/party/" + chatDto.getPartyId(), chatSendDto);
+        template.convertAndSend("/sub/party/" + chatDto.getPartyId()+"/chat", chatSendDto);
     }
 }

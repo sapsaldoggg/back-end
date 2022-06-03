@@ -26,6 +26,7 @@ public class RedisSubscriber implements MessageListener {
             String publishMessage = (String) redisTemplate.getStringSerializer().deserialize(message.getBody());
             ChatSendDto chatSendDto = objectMapper.readValue(publishMessage, ChatSendDto.class);
             messageTemplate.convertAndSend("/sub/party/"+chatSendDto.getPartyId());
+            messageTemplate.convertAndSend("/sub/party/"+chatSendDto.getPartyId()+"/chat");
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

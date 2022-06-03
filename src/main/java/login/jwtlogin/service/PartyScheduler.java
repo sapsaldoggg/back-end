@@ -14,7 +14,6 @@ public class PartyScheduler {
 
     @Scheduled(cron = "* * * * * *")
     public void deletePartyScheduler() {
-        log.info("스케줄러 실행");
         partyService.removePartyScheduler();
     }
 }

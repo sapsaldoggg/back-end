@@ -144,12 +144,10 @@ public class PartyService {
 
     @Transactional
     public void removePartyScheduler() {
-        log.info("----------------스케줄러 실행----------------");
         List<Party> parties = partyRepository.findAll();
         for (Party party : parties) {
             if (party.getMatchingStatus() == MatchingStatus.MATCHED) {
                 Duration duration = Duration.between(party.getMatchingStartTime(), LocalDateTime.now());
-                log.info("시간:"+String.valueOf(duration.getSeconds()));
                 if (duration.getSeconds() >= 7200) {   //2시간 지나면
                     initialMembers(party);
                 }
