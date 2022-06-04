@@ -16,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
@@ -57,8 +59,7 @@ public class PartyController {
 
         //
         for (Party party : parties) {
-            partyListDtoList.add(new PartyInfoDto(party.getId(), party.getOwner(),
-                    party.getRestaurant().getName(), party.getTitle(), party.getCreatedTime(),
+            partyListDtoList.add(new PartyInfoDto(party.getId(),  party.getTitle(), party.getCreateAt(),
                     party.getMatchingStatus(), party.getMaxNumber(), party.getCurrentNumber()));
         }
 
@@ -69,7 +70,7 @@ public class PartyController {
     //파티 생성
     @PostMapping("/party")
     public Object create(@AuthenticationPrincipal PrincipalDetails principalDetails,
-                         @RequestBody PartyCreateDto partyDto,
+                         @Validated @RequestBody PartyCreateDto partyDto,
                          @PathVariable(name = "restaurant_id") Long id) {
         Member member = principalDetails.getMember();
         Member findMember = memberRepository.findById(member.getId()).orElseThrow(
@@ -81,7 +82,7 @@ public class PartyController {
         if (findMember.getIsJoined() == true) {
             return new ResponseEntity<>("이미 파티에 소속되어 있습니다", HttpStatus.BAD_REQUEST);
         }
-        Party party = partyService.create(findMember, restaurant, partyDto.getTitle(), partyDto.getMaxNumber());
+        Party party = partyService.create(findMember, restaurant, partyDto.getTitle(), partyDto.getMaximumCount());
 
         return partyService.partyInfoReturn(party);
 
@@ -127,7 +128,7 @@ public class PartyController {
     //파티 수정
     @PutMapping("/party/{party_id}")
     public Boolean edit(@RequestBody PartyCreateDto partyDto, @PathVariable(name = "party_id") Long id) {
-        partyService.update(id, partyDto.getTitle(), partyDto.getMaxNumber());
+        partyService.update(id, partyDto.getTitle(), partyDto.getMaximumCount());
         return true;
     }
 

@@ -16,19 +16,17 @@ public class PartyDto {
 
     private Long id;
 
-    private String owner;  //방장 닉네임
-
     private String restaurant;
 
     private String title;
 
-    private LocalDateTime createdTime;
+    private MatchingStatus status;
 
-    private MatchingStatus matchingStatus;
+    private Integer maximumCount;
 
-    private Integer maxNumber;
+    private Integer currentCount;
 
-    private Integer currentNumber;
+    private LocalDateTime createdAt;
 
     private List<PartyMembersDto> members;
 }

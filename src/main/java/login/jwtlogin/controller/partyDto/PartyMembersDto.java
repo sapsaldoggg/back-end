@@ -7,6 +7,8 @@ import lombok.Data;
 @AllArgsConstructor
 public class PartyMembersDto {
 
+    private Long id;
+
     private String nickName;
 
     private String sex;
@@ -16,4 +18,8 @@ public class PartyMembersDto {
     private Integer sno;
 
     private Long reliability;
+
+    private Boolean owner;
+
+    private Boolean ready;
 }

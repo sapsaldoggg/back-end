@@ -12,17 +12,13 @@ public class PartyInfoDto {
 
     private Long id;
 
-    private String owner;  //방장 닉네임
-
-    private String restaurant;
-
     private String title;
 
-    private LocalDateTime createdTime;
+    private LocalDateTime createdAt;
 
-    private MatchingStatus matchingStatus;
+    private MatchingStatus status;
 
-    private Integer maxNumber;
+    private Integer maximumCount;
 
-    private Integer currentNumber;
+    private Integer currentCount;
 }

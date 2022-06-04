@@ -33,10 +33,6 @@ public class Party extends BaseEntity{
     //방장 닉네임
     private String owner;
 
-    @CreatedDate
-    @Column(updatable = false)
-    private LocalDateTime createdTime;
-
     @Enumerated(EnumType.STRING)
     private MatchingStatus matchingStatus;
 
@@ -63,7 +59,6 @@ public class Party extends BaseEntity{
 
         party.restaurant = restaurant;
         party.title = title;
-        party.createdTime = LocalDateTime.now();
         party.matchingStatus = MatchingStatus.NON_MATCHED;
         party.fullStatus = FullStatus.NON_FULL;
         party.maxNumber = maxNumber;

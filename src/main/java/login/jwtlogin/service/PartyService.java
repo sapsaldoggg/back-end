@@ -118,12 +118,12 @@ public class PartyService {
         List<PartyMembersDto> members = new ArrayList<>();
 
         for (Member partyMember : party.getMembers()) {
-            members.add(new PartyMembersDto(partyMember.getNickname(), partyMember.getSex(), partyMember.getDept(),
-                    partyMember.getSno(), partyMember.getReliability()));
+            members.add(new PartyMembersDto(partyMember.getId(), partyMember.getNickname(), partyMember.getSex(), partyMember.getDept(),
+                    partyMember.getSno(), partyMember.getReliability(),partyMember.getOwner(), partyMember.getIsReady()));
         }
-        return new PartyDto(party.getId(), party.getOwner(), party.getRestaurant().getName(),
-                party.getTitle(), party.getCreatedTime(), party.getMatchingStatus(), party.getMaxNumber(),
-                party.getCurrentNumber(), members);
+        return new PartyDto(party.getId(), party.getRestaurant().getName(),
+                party.getTitle(), party.getMatchingStatus(), party.getMaxNumber(),
+                party.getCurrentNumber(), party.getCreateAt() , members);
     }
 
 
