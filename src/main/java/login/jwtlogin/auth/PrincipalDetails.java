@@ -26,6 +26,7 @@ public class PrincipalDetails implements UserDetails {
         return authorities;
     }
 
+
     public Member getMember() {
         return this.member;
     }

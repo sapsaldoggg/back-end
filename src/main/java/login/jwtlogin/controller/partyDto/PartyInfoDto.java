@@ -14,6 +14,8 @@ public class PartyInfoDto {
 
     private String title;
 
+    private String restaurant;
+
     private LocalDateTime createdAt;
 
     private MatchingStatus status;

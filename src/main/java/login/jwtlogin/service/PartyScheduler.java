@@ -12,7 +12,8 @@ public class PartyScheduler {
 
     private final PartyService partyService;
 
-    @Scheduled(cron = "* * * * * *")
+    //5분에 한번씩 파티 검사
+    @Scheduled(cron = "* 0/5 * * * ?")
     public void deletePartyScheduler() {
         partyService.removePartyScheduler();
     }

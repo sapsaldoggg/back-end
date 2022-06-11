@@ -59,7 +59,7 @@ public class PartyController {
 
         //
         for (Party party : parties) {
-            partyListDtoList.add(new PartyInfoDto(party.getId(),  party.getTitle(), party.getCreateAt(),
+            partyListDtoList.add(new PartyInfoDto(party.getId(),  party.getTitle(), restaurant.getName(), party.getCreateAt(),
                     party.getMatchingStatus(), party.getMaxNumber(), party.getCurrentNumber()));
         }
 
@@ -162,5 +162,5 @@ public class PartyController {
     }
 
 
-//
+
 }
