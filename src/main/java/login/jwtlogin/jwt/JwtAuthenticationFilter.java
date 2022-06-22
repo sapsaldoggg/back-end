@@ -59,7 +59,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                     new UsernamePasswordAuthenticationToken(loginDto.getLoginId(), loginDto.getPassword());
 
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
-
+            log.info("----------------------------------------");
+            log.info("authentication.getName() {}", authentication.getName());
+            log.info("----------------------------------------");
             PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
             log.info("principalDetail {}", principalDetails.getUsername());
             //username이 출력됨 => 로그인 정상 처리
