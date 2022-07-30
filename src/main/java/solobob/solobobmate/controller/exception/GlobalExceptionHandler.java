@@ -1,9 +1,9 @@
 package solobob.solobobmate.controller.exception;
 
 
-import solobob.solobobmate.result.ErrorResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -42,6 +42,13 @@ public class GlobalExceptionHandler {
         return new ErrorResult("타입이 맞지 않습니다");
     }
 
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResult badCredentialsException(BadCredentialsException e) {
+        return new ErrorResult("로그인 정보가 일치하지 않습니다");
+    }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResult handleEntityNotFoundException(EntityNotFoundException e) {
@@ -57,7 +64,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResult handleDropTheCodeException(DropTheCodeException e) {
+    public ErrorResult handleDropTheCodeException(SoloBobException e) {
         return new ErrorResult(e.getMessage());
     }
 }

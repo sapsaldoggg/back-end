@@ -1,4 +1,4 @@
-package solobob.solobobmate.auth.email;
+package solobob.solobobmate.repository.email;
 
 import solobob.solobobmate.domain.email.VerifyCode;
 import lombok.RequiredArgsConstructor;

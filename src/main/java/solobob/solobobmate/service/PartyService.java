@@ -39,7 +39,7 @@ public class PartyService {
     @Transactional
     public void update(Long id, String title, int maxNumber) {
         Party party = partyRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException(ExceptionMessages.NOTFOUND_PARTY)
+                () -> new EntityNotFoundException(ExceptionMessages.NOT_FOUND_PARTY)
         );
         party.update(title, maxNumber);
     }
@@ -60,7 +60,7 @@ public class PartyService {
     @Transactional
     public void exit(Long id, Member member) {
         Party party = partyRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException(ExceptionMessages.NOTFOUND_PARTY)
+                () -> new EntityNotFoundException(ExceptionMessages.NOT_FOUND_PARTY)
         );
         if (member.getOwner() == true) {
             throw new ExitException("방장은 나갈수 없습니다.");
@@ -132,14 +132,14 @@ public class PartyService {
     @Transactional
     public void initialMembers(Party party) {
         for (Member member : party.getMembers()) {
-            if (member.getOwner() == true) {
+            if (member.getOwner() == true) { //프록시 객체 초기화 => (1)+1
                 member.setOwner(false);
             }
             member.setParty(null);
             member.setIsJoined(false);
             member.setIsReady(false);
         }
-        party.getMembers().clear(); // 굳이 삭제해야되나?? (고민)
+        party.getMembers().clear();
         partyRepository.removeParty(party);
     }
 

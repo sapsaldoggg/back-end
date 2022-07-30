@@ -7,9 +7,7 @@ import java.util.*;
 
 @Entity
 @Getter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseEntity{
 
     @Id
@@ -24,8 +22,6 @@ public class Member extends BaseEntity{
     private String password;
 
     private String sex;
-
-    private String roles;
 
     private String email;
 
@@ -47,6 +43,8 @@ public class Member extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     private Party party;
 
+    private Authority authority;
+
     //--------------------------------------------------------------------
     public void setParty(Party party) {
         this.party = party;
@@ -65,49 +63,22 @@ public class Member extends BaseEntity{
     }
     //--------------------------------------------------------------------
 
-//    @ElementCollection
-//    @CollectionTable(name = "friend" , joinColumns =
-//        @JoinColumn(name = "member_id")
-//    )
-//    private Set<Long> friends = new HashSet<>();
-//
-//
-//    @ElementCollection
-//    @CollectionTable(name = "favorite_food" , joinColumns =
-//    @JoinColumn(name = "member_id")
-//    )
-//    private List<String> favoriteFoods = new ArrayList<>();
-
-
-//    @OneToMany(mappedBy = "member")
-//    private List<Party> parties = new ArrayList<>();
-
-    //------------------------------------------------------------------------------------------------
-
-
-//    public Member(String nickname, String loginId, String password, String sex, String email, String roles, String university, String dept, Integer sno, Long reliability) {
-//        this.nickname = nickname;
-//        this.loginId = loginId;
-//        this.password = password;
-//        this.sex = sex;
-//        this.email = email;
-//        this.roles= roles;
-//        this.university = university;
-//        this.dept = dept;
-//        this.sno = sno;
-//        this.reliability = reliability;
-//    }
-
-    public List<String> getRoleList() {
-        if (this.roles.length() > 0) {
-            return Arrays.asList(this.roles.split(","));
-        }else{
-            return new ArrayList<>();
-        }
+    @Builder
+    public Member(String nickname, String loginId, String password, String sex, String email
+            , String university, String dept, Integer sno, Long reliability, Boolean owner
+            , Boolean isJoined, Boolean isReady, Authority authority) {
+        this.nickname = nickname;
+        this.loginId = loginId;
+        this.password = password;
+        this.sex = sex;
+        this.email = email;
+        this.university = university;
+        this.dept = dept;
+        this.sno = sno;
+        this.reliability = reliability;
+        this.owner = owner;
+        this.isJoined = isJoined;
+        this.isReady = isReady;
+        this.authority = authority;
     }
-
-
-
-
-
 }

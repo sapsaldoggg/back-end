@@ -1,12 +1,13 @@
 package solobob.solobobmate.chat;
 
-import solobob.solobobmate.auth.PrincipalDetails;
+import solobob.solobobmate.auth.config.SecurityUtil;
 import solobob.solobobmate.chat.chatDto.ChatDto;
 import solobob.solobobmate.chat.chatDto.ChatSendDto;
 import solobob.solobobmate.controller.exception.ExceptionMessages;
 import solobob.solobobmate.domain.Chat;
 import solobob.solobobmate.domain.Member;
 import solobob.solobobmate.domain.Party;
+import solobob.solobobmate.repository.MemberRepository;
 import solobob.solobobmate.repository.PartyRepository;
 import solobob.solobobmate.service.ChatService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.persistence.EntityNotFoundException;
+
 @RequiredArgsConstructor
 @RestController
 @Slf4j
@@ -25,6 +28,14 @@ public class ChatController {
     private final SimpMessagingTemplate template;
     private final PartyRepository partyRepository;
     private final ChatService chatService;
+    private final MemberRepository memberRepository;
+
+    public Member getMember() {
+        Member member = memberRepository.findByLoginId(SecurityUtil.getCurrentMemberId()).orElseThrow(
+                () -> new EntityNotFoundException(ExceptionMessages.NOT_FOUND_MEMBER)
+        );
+        return member;
+    }
 
     // /pub/party/enter 로 요청이 오면, 파티 입장
 //    @MessageMapping("/party/enter")   // /pub/party/enter
@@ -47,10 +58,10 @@ public class ChatController {
 
     // /pub/party/message 로 요청이 오면, 메시지 전송 (SEND)
     @MessageMapping("/party/message")  // /pub/party/message
-    public void messageChat(@RequestBody ChatDto chatDto, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        Member member = principalDetails.getMember();
+    public void messageChat(@RequestBody ChatDto chatDto) {
+        Member member = getMember();
         Party party = partyRepository.findById(chatDto.getPartyId()).orElseThrow(
-                () -> new IllegalArgumentException(ExceptionMessages.NOTFOUND_PARTY)
+                () -> new IllegalArgumentException(ExceptionMessages.NOT_FOUND_PARTY)
         );
         Chat chat = chatService.create(party, member, chatDto.getMessage());
 

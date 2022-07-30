@@ -1,4 +1,4 @@
-package solobob.solobobmate.result;
+package solobob.solobobmate.controller.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

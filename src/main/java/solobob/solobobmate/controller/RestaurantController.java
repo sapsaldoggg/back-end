@@ -1,5 +1,6 @@
 package solobob.solobobmate.controller;
 
+import org.springframework.http.ResponseEntity;
 import solobob.solobobmate.controller.restaurantDto.RestaurantListDto;
 import solobob.solobobmate.service.RestaurantService;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +21,8 @@ public class RestaurantController {
 
     //식당 조회 (메인페이지 예상 - 지도 화면)
     @GetMapping("/restaurants")
-    public List<RestaurantListDto> restaurantList() {
-        return restaurantService.restaurantList();
+    public ResponseEntity restaurantList() {
+        return ResponseEntity.ok(restaurantService.restaurantList());
     }
 
 }
