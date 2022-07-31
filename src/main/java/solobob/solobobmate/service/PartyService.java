@@ -18,6 +18,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -116,15 +117,9 @@ public class PartyService {
 
     //파티생성, 참가 시 파티정보(참가자 목록) 반환 메소드
     public PartyDto partyInfoReturn(Party party) {
-        List<PartyMembersDto> members = new ArrayList<>();
 
-        for (Member partyMember : party.getMembers()) {
-            members.add(new PartyMembersDto(partyMember.getId(), partyMember.getNickname(), partyMember.getSex(), partyMember.getDept(),
-                    partyMember.getSno(), partyMember.getReliability(),partyMember.getOwner(), partyMember.getIsReady()));
-        }
-        return new PartyDto(party.getId(), party.getRestaurant().getName(),
-                party.getTitle(), party.getMatchingStatus(), party.getMaxNumber(),
-                party.getCurrentNumber(), party.getCreateAt() , members);
+        return new PartyDto(party);
+
     }
 
 

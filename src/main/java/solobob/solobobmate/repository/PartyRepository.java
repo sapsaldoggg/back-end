@@ -44,6 +44,17 @@ public class PartyRepository {
                 .getResultList();
     }
 
+    /**
+     * 식당과 함께 조회
+     * @param restaurant_id
+     * @return
+     */
+    public List<Party> findWithRestaurant(Long restaurant_id) {
+        return em.createQuery("select p from Party p join fetch p.restaurant r where r.id = :id", Party.class)
+                .setParameter("id", restaurant_id)
+                .getResultList();
+    }
+
 
 
     /**
@@ -51,7 +62,6 @@ public class PartyRepository {
      * @param ownerName : 방장 이름
      * @return  방장 이름에 해당하는 파티 있을 시, 반환
      */
-
     public Optional<Party> findByOwnerNickName(String ownerName) {
         return em.createQuery("select p from Party p where p.owner = :owner", Party.class)
                 .setParameter("owner", ownerName)
@@ -59,6 +69,19 @@ public class PartyRepository {
                 .stream().findFirst();
     }
 
+
+    /**
+     * 파티 정보 반환
+     * 참가원, 식당 정보 한꺼번에 조회
+     * @param id
+     * @return
+     */
+    public Optional<Party> findWithMembersRestaurant(Long id) {
+        return em.createQuery("select distinct p from Party p join fetch p.members join fetch p.restaurant where p.id = :id ", Party.class)
+                .setParameter("id", id)
+                .getResultList()
+                .stream().findFirst();
+    }
 
 
 

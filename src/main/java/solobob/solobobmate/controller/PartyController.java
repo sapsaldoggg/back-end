@@ -53,11 +53,7 @@ public class PartyController {
 
         Optional<Party> findParty = partyRepository.findByOwnerNickName(member.getNickname());
 
-        Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException(ExceptionMessages.NOTFOUND_RESTAURANT)
-        );
-
-        List<Party> parties = partyRepository.findByRestaurantId(restaurant);
+        List<Party> parties = partyRepository.findWithRestaurant(id);
 
         List<PartyInfoDto> partyListDtoList = new ArrayList<>();
 
@@ -79,7 +75,7 @@ public class PartyController {
         Member member = getMember();
 
         Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException(ExceptionMessages.NOTFOUND_RESTAURANT)
+                () -> new EntityNotFoundException(ExceptionMessages.NOT_FOUND_RESTAURANT)
         );
         if (member.getIsJoined() == true) {
             return new ResponseEntity<>("이미 파티에 소속되어 있습니다", HttpStatus.BAD_REQUEST);
@@ -100,7 +96,7 @@ public class PartyController {
         );
 
         if (partyService.join(party, member) == null) {
-            return new ResponseEntity<Boolean>(false, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
         }
         partyService.join(party, member);
         return ResponseEntity.ok(partyService.partyInfoReturn(party));
@@ -118,7 +114,7 @@ public class PartyController {
     //파티 입장
     @GetMapping("/party/{party_id}")
     public ResponseEntity enter(@PathVariable(name = "party_id") Long id) {
-        Party party = partyRepository.findById(id).orElseThrow(
+        Party party = partyRepository.findWithMembersRestaurant(id).orElseThrow(
                 () -> new EntityNotFoundException(ExceptionMessages.NOT_FOUND_PARTY)
         );
         return ResponseEntity.ok(partyService.partyInfoReturn(party));

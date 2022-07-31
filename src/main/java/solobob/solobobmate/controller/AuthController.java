@@ -54,7 +54,7 @@ public class AuthController {
         ResponseCookie cookie = ResponseCookie.from("RefreshToken", refreshToken)
                 .httpOnly(true)
                 .secure(true)
-                .maxAge(60 * 60 * 24 * 7)  //7일
+                .maxAge(60 * 60 * 24 * 7)  //7일 -> 유효기간
                 .sameSite("None")
                 .path("/")
                 .build();
@@ -66,6 +66,10 @@ public class AuthController {
      */
     @PostMapping("/refresh")
     public void refresh(@CookieValue(name = "RefreshToken") String refreshToken, HttpServletResponse response) {
+
+        if (refreshToken == null) {
+
+        }
         TokenDto tokenDto = authService.refresh(refreshToken);
 
         response.setHeader("Authorization", "Bearer "+tokenDto.getAccessToken());
