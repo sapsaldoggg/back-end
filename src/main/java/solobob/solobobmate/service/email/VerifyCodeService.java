@@ -42,7 +42,7 @@ public class VerifyCodeService {
     }
 
     public Optional<VerifyCode> findExpiredCode(String code) {
-        return verifyCodeRepository.find(code, LocalDateTime.now(), false);
+        return verifyCodeRepository.find(code, false);
     }
 
 

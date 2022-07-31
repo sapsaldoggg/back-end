@@ -9,6 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import solobob.solobobmate.controller.exception.party.PartyException;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public List<ErrorResult> error(MethodArgumentNotValidException e) {
+    public List<ErrorResult> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         List<ErrorResult> errorList = new ArrayList<>();
 
         String message = "";
@@ -38,14 +39,14 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResult error(HttpMessageNotReadableException e) {
+    public ErrorResult handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         return new ErrorResult("타입이 맞지 않습니다");
     }
 
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResult badCredentialsException(BadCredentialsException e) {
+    public ErrorResult handleBadCredentialsException(BadCredentialsException e) {
         return new ErrorResult("로그인 정보가 일치하지 않습니다");
     }
 
@@ -55,6 +56,11 @@ public class GlobalExceptionHandler {
         return new ErrorResult(e.getMessage());
     }
 
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResult handlePartyException(PartyException e) {
+        return new ErrorResult(e.getMessage());
+    }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)

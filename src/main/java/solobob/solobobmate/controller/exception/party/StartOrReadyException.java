@@ -1,4 +1,6 @@
-package solobob.solobobmate.controller.exception;
+package solobob.solobobmate.controller.exception.party;
+
+import solobob.solobobmate.controller.exception.SoloBobException;
 
 public class StartOrReadyException extends SoloBobException {
 

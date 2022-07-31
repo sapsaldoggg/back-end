@@ -78,7 +78,7 @@ public class AuthController {
 
     //아이디 중복검사
     @PostMapping("/duplicate-loginId")
-    public ResponseEntity duplicateId(@RequestBody @Validated @NotBlank String loginId) {
+    public ResponseEntity duplicateId(@RequestBody @NotBlank String loginId) {
         log.info(loginId);
         if (memberRepository.findByLoginId(loginId).isPresent()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
@@ -90,7 +90,7 @@ public class AuthController {
 
     //닉네임 중복 검사
     @PostMapping("/duplicate-nickname")
-    public ResponseEntity duplicateNickName(@RequestBody @Validated @NotBlank String nickname) {
+    public ResponseEntity duplicateNickName(@RequestBody @NotBlank String nickname) {
         log.info(nickname);
         log.info(nickname.getClass().getName());
         if (memberRepository.findByNickName(nickname).isPresent()) {
@@ -100,7 +100,7 @@ public class AuthController {
         }
     }
 
-    //메일로 url 보내기
+    //메일로 인증코드 보내기
     @PostMapping("/mail-auth")
     public ResponseEntity mailAuthReq(@RequestBody @Email String email) {
         verifyCodeService.createVerifyCode(email);

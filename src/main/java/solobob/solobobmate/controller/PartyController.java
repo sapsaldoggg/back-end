@@ -13,14 +13,11 @@ import solobob.solobobmate.repository.RestaurantRepository;
 import solobob.solobobmate.service.PartyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,17 +52,8 @@ public class PartyController {
 
         List<Party> parties = partyRepository.findWithRestaurant(id);
 
-        List<PartyInfoDto> partyListDtoList = new ArrayList<>();
-
-
-        //
-        for (Party party : parties) {
-            partyListDtoList.add(new PartyInfoDto(party.getId(),  party.getTitle(), party.getRestaurant().getName(), party.getCreateAt(),
-                    party.getMatchingStatus(), party.getMaxNumber(), party.getCurrentNumber()));
-        }
-
         return findParty.isPresent() ?
-                ResponseEntity.ok(new PartyListDto(findParty.get().getId(), partyListDtoList)) : ResponseEntity.ok(new PartyListDto(partyListDtoList));
+                ResponseEntity.ok(new PartyListDto(findParty.get().getId(), parties)) : ResponseEntity.ok(new PartyListDto(parties));
     }
 
     //파티 생성
@@ -77,9 +65,7 @@ public class PartyController {
         Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException(ExceptionMessages.NOT_FOUND_RESTAURANT)
         );
-        if (member.getIsJoined() == true) {
-            return new ResponseEntity<>("이미 파티에 소속되어 있습니다", HttpStatus.BAD_REQUEST);
-        }
+
         Party party = partyService.create(member, restaurant, partyDto.getTitle(), partyDto.getMaximumCount());
 
         return ResponseEntity.ok(partyService.partyInfoReturn(party));
@@ -95,10 +81,8 @@ public class PartyController {
                 () -> new EntityNotFoundException(ExceptionMessages.NOT_FOUND_PARTY)
         );
 
-        if (partyService.join(party, member) == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
-        }
         partyService.join(party, member);
+
         return ResponseEntity.ok(partyService.partyInfoReturn(party));
     }
 
@@ -108,25 +92,33 @@ public class PartyController {
 
         Member member = getMember();
 
-        partyService.exit(id, member);
+        Party party = partyRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException(ExceptionMessages.NOT_FOUND_PARTY)
+        );
+
+        partyService.exit(party, member);
     }
 
     //파티 입장
     @GetMapping("/party/{party_id}")
     public ResponseEntity enter(@PathVariable(name = "party_id") Long id) {
+        Member member = getMember();
         Party party = partyRepository.findWithMembersRestaurant(id).orElseThrow(
                 () -> new EntityNotFoundException(ExceptionMessages.NOT_FOUND_PARTY)
         );
+
         return ResponseEntity.ok(partyService.partyInfoReturn(party));
     }
 
     //파티 수정
     @PutMapping("/party/{party_id}")
     public void edit(@RequestBody PartyCreateDto partyDto, @PathVariable(name = "party_id") Long id) {
+
         partyService.update(id, partyDto.getTitle(), partyDto.getMaximumCount());
+
     }
 
-    //파티 준비 or 시작
+    // 파티 준비 or 시작
     @PostMapping("/party/{party_id}/ready")
     public void ready(@PathVariable("party_id") Long id) {
         Member member = getMember();
@@ -134,9 +126,11 @@ public class PartyController {
         Party party = partyRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException(ExceptionMessages.NOT_FOUND_PARTY)
         );
+
         partyService.startOrReady(party, member);
     }
 
+    // 파티 삭제 (방장권한)
     @DeleteMapping("/party/{party_id}")
     public void delete(@PathVariable("party_id") Long id) {
         Member member = getMember();
@@ -145,10 +139,7 @@ public class PartyController {
                 () -> new EntityNotFoundException(ExceptionMessages.NOT_FOUND_PARTY)
         );
 
-        if (member.getOwner() == false) {
-            throw new IllegalStateException("방장 권한 입니다.");
-        }
-        partyService.initialMembers(party);
+        partyService.initialMembers(member, party);
     }
 
 

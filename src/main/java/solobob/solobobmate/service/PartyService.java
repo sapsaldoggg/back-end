@@ -1,10 +1,9 @@
 package solobob.solobobmate.service;
 
 import solobob.solobobmate.controller.exception.ExceptionMessages;
-import solobob.solobobmate.controller.exception.ExitException;
-import solobob.solobobmate.controller.exception.StartOrReadyException;
+import solobob.solobobmate.controller.exception.party.PartyException;
+import solobob.solobobmate.controller.exception.party.StartOrReadyException;
 import solobob.solobobmate.controller.partyDto.PartyDto;
-import solobob.solobobmate.controller.partyDto.PartyMembersDto;
 import solobob.solobobmate.domain.*;
 import solobob.solobobmate.repository.PartyRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,13 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -26,11 +19,13 @@ import java.util.stream.Collectors;
 public class PartyService {
 
     private final PartyRepository partyRepository;
-    private final EntityManager entityManager;
 
     //파티 생성
     @Transactional
     public Party create(Member member, Restaurant restaurant, String title, int maxNumber) {
+        if (member.getIsJoined() == true) {
+            throw new PartyException("이미 파티에 소속되어있습니다");
+        }
         Party party = Party.create(member, restaurant, title, maxNumber);
         partyRepository.save(party);
         return party;
@@ -50,25 +45,22 @@ public class PartyService {
     public Party join(Party party, Member member) {
         if (party.getFullStatus() == FullStatus.FULL || member.getIsJoined()
                 || party.getMatchingStatus() == MatchingStatus.MATCHED) {
-            return null;
+            throw new PartyException("참가할 수 없습니다.");
         }
         party.addMember(member);
-//        log.info("join (party) = {}", party);
+
         return party;
     }
 
     // 파티 나가기 (멤버만 가능, 방장x)
     @Transactional
-    public void exit(Long id, Member member) {
-        Party party = partyRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException(ExceptionMessages.NOT_FOUND_PARTY)
-        );
+    public void exit(Party party, Member member) {
         if (member.getOwner() == true) {
-            throw new ExitException("방장은 나갈수 없습니다.");
+            throw new PartyException("방장은 나갈수 없습니다.");
         } else if (party.getMatchingStatus() == MatchingStatus.MATCHED) {
-            throw new ExitException("이미 파티가 매칭되었습니다.");
+            throw new PartyException("이미 파티가 매칭되었습니다.");
         } else if (member.getIsReady() == true) {
-            throw new ExitException("준비상태에서 파티를 나갈 수 없습니다.");
+            throw new PartyException("준비상태에서 파티를 나갈 수 없습니다.");
         }
         party.deleteMember(member);
     }
@@ -125,31 +117,34 @@ public class PartyService {
 
     //파티 삭제 (방장 권한)
     @Transactional
-    public void initialMembers(Party party) {
-        for (Member member : party.getMembers()) {
-            if (member.getOwner() == true) { //프록시 객체 초기화 => (1)+1
-                member.setOwner(false);
+    public void initialMembers(Member member, Party party) {
+        if (member.getOwner() == false) {
+            throw new PartyException("방장 권한 입니다");
+        }
+        for (Member partyMember : party.getMembers()) {
+            if (partyMember.getOwner() == true) { //프록시 객체 초기화 => (1)+1
+                partyMember.setOwner(false);
             }
-            member.setParty(null);
-            member.setIsJoined(false);
-            member.setIsReady(false);
+            partyMember.setParty(null);
+            partyMember.setIsJoined(false);
+            partyMember.setIsReady(false);
         }
         party.getMembers().clear();
         partyRepository.removeParty(party);
     }
 
-    @Transactional
-    public void removePartyScheduler() {
-        List<Party> parties = partyRepository.findAll();
-        for (Party party : parties) {
-            if (party.getMatchingStatus() == MatchingStatus.MATCHED) {
-                Duration duration = Duration.between(party.getMatchingStartTime(), LocalDateTime.now());
-                if (duration.getSeconds() >= 7200) {   //2시간 지나면
-                    initialMembers(party);
-                }
-            }
-        }
-    }
+//    @Transactional
+//    public void removePartyScheduler() {
+//        List<Party> parties = partyRepository.findAll();
+//        for (Party party : parties) {
+//            if (party.getMatchingStatus() == MatchingStatus.MATCHED) {
+//                Duration duration = Duration.between(party.getMatchingStartTime(), LocalDateTime.now());
+//                if (duration.getSeconds() >= 7200) {   //2시간 지나면
+//                    initialMembers(party);
+//                }
+//            }
+//        }
+//    }
 
 
 }

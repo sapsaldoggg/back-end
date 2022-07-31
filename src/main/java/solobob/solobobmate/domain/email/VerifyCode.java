@@ -18,15 +18,12 @@ public class VerifyCode {
 
     private String code;
 
-    private LocalDateTime expiredDate;
-
     private boolean expired;
 
     public static VerifyCode createCode(String code) {
         VerifyCode verifyCode = new VerifyCode();
         verifyCode.code = code;
         verifyCode.expired = false;
-        verifyCode.expiredDate = LocalDateTime.now().plusMinutes(3);
         return verifyCode;
     }
 

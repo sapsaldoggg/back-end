@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -18,11 +19,8 @@ public class RestaurantService {
     private final RestaurantRepository restaurantRepository;
 
     public List<RestaurantListDto> restaurantList() {
-        List<RestaurantListDto> restaurantList = new ArrayList<>();
-        for (Restaurant restaurant : restaurantRepository.findAll()) {
-            restaurantList.add(new RestaurantListDto(restaurant.getId(), restaurant.getName(), restaurant.getCategory(),
-                    restaurant.getAddress(), restaurant.getLongtitude(), restaurant.getLatitude()));
-        }
-        return restaurantList;
+
+        return restaurantRepository.findAll().stream().map(r -> new RestaurantListDto(r)).collect(Collectors.toList());
+
     }
 }
