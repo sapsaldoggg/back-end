@@ -2,7 +2,8 @@ package solobob.solobobmate.controller;
 
 
 import solobob.solobobmate.auth.config.SecurityUtil;
-import solobob.solobobmate.controller.exception.ExceptionMessages;
+import solobob.solobobmate.controller.exception.ErrorCode;
+import solobob.solobobmate.controller.exception.SoloBobException;
 import solobob.solobobmate.controller.partyDto.*;
 import solobob.solobobmate.domain.Member;
 import solobob.solobobmate.domain.Party;
@@ -35,9 +36,9 @@ public class PartyController {
     private final RestaurantRepository restaurantRepository;
 
 
-    public Member getMember() {
+    public Member getMember(){
         Member member = memberRepository.findByLoginId(SecurityUtil.getCurrentMemberId()).orElseThrow(
-                () -> new EntityNotFoundException(ExceptionMessages.NOT_FOUND_MEMBER)
+                () -> new SoloBobException(ErrorCode.NOT_FOUND_MEMBER)
         );
         return member;
     }
@@ -63,7 +64,7 @@ public class PartyController {
         Member member = getMember();
 
         Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException(ExceptionMessages.NOT_FOUND_RESTAURANT)
+                () -> new SoloBobException(ErrorCode.NOT_FOUND_RESTAURANT)
         );
 
         Party party = partyService.create(member, restaurant, partyDto.getTitle(), partyDto.getMaximumCount());
@@ -72,13 +73,12 @@ public class PartyController {
 
     }
 
-    //파티 참가
     @PostMapping("/party/{party_id}/join")
     public ResponseEntity joinParty(@PathVariable(name = "party_id") Long id) {
         Member member = getMember();
 
         Party party = partyRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException(ExceptionMessages.NOT_FOUND_PARTY)
+                () -> new SoloBobException(ErrorCode.NOT_FOUND_PARTY)
         );
 
         partyService.join(party, member);
@@ -86,6 +86,7 @@ public class PartyController {
         return ResponseEntity.ok(partyService.partyInfoReturn(party));
     }
 
+    //파티 참가
     //파티 나가기 (멤버만 가능, 방장 x)
     @PostMapping("/party/{party_id}/exit")
     public void exitParty(@PathVariable(name = "party_id") Long id) {
@@ -93,7 +94,7 @@ public class PartyController {
         Member member = getMember();
 
         Party party = partyRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException(ExceptionMessages.NOT_FOUND_PARTY)
+                () -> new SoloBobException(ErrorCode.NOT_FOUND_PARTY)
         );
 
         partyService.exit(party, member);
@@ -104,7 +105,7 @@ public class PartyController {
     public ResponseEntity enter(@PathVariable(name = "party_id") Long id) {
         Member member = getMember();
         Party party = partyRepository.findWithMembersRestaurant(id).orElseThrow(
-                () -> new EntityNotFoundException(ExceptionMessages.NOT_FOUND_PARTY)
+                () -> new SoloBobException(ErrorCode.NOT_FOUND_PARTY)
         );
 
         return ResponseEntity.ok(partyService.partyInfoReturn(party));
@@ -124,7 +125,7 @@ public class PartyController {
         Member member = getMember();
 
         Party party = partyRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException(ExceptionMessages.NOT_FOUND_PARTY)
+                () -> new SoloBobException(ErrorCode.NOT_FOUND_PARTY)
         );
 
         partyService.startOrReady(party, member);
@@ -136,7 +137,7 @@ public class PartyController {
         Member member = getMember();
 
         Party party = partyRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException(ExceptionMessages.NOT_FOUND_PARTY)
+                () -> new SoloBobException(ErrorCode.NOT_FOUND_PARTY)
         );
 
         partyService.initialMembers(member, party);

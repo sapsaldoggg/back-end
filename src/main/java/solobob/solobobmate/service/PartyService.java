@@ -1,8 +1,7 @@
 package solobob.solobobmate.service;
 
-import solobob.solobobmate.controller.exception.ExceptionMessages;
-import solobob.solobobmate.controller.exception.party.PartyException;
-import solobob.solobobmate.controller.exception.party.StartOrReadyException;
+import solobob.solobobmate.controller.exception.ErrorCode;
+import solobob.solobobmate.controller.exception.SoloBobException;
 import solobob.solobobmate.controller.partyDto.PartyDto;
 import solobob.solobobmate.domain.*;
 import solobob.solobobmate.repository.PartyRepository;
@@ -24,7 +23,7 @@ public class PartyService {
     @Transactional
     public Party create(Member member, Restaurant restaurant, String title, int maxNumber) {
         if (member.getIsJoined() == true) {
-            throw new PartyException("이미 파티에 소속되어있습니다");
+            throw new SoloBobException(ErrorCode.PARTY_CREATE);
         }
         Party party = Party.create(member, restaurant, title, maxNumber);
         partyRepository.save(party);
@@ -35,7 +34,7 @@ public class PartyService {
     @Transactional
     public void update(Long id, String title, int maxNumber) {
         Party party = partyRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException(ExceptionMessages.NOT_FOUND_PARTY)
+                () -> new SoloBobException(ErrorCode.NOT_FOUND_PARTY)
         );
         party.update(title, maxNumber);
     }
@@ -45,7 +44,7 @@ public class PartyService {
     public Party join(Party party, Member member) {
         if (party.getFullStatus() == FullStatus.FULL || member.getIsJoined()
                 || party.getMatchingStatus() == MatchingStatus.MATCHED) {
-            throw new PartyException("참가할 수 없습니다.");
+            throw new SoloBobException(ErrorCode.PARTY_JOIN);
         }
         party.addMember(member);
 
@@ -56,11 +55,11 @@ public class PartyService {
     @Transactional
     public void exit(Party party, Member member) {
         if (member.getOwner() == true) {
-            throw new PartyException("방장은 나갈수 없습니다.");
+            throw new SoloBobException(ErrorCode.PARTY_EXIT_OWNER);
         } else if (party.getMatchingStatus() == MatchingStatus.MATCHED) {
-            throw new PartyException("이미 파티가 매칭되었습니다.");
+            throw new SoloBobException(ErrorCode.PARTY_EXIT_MATCH);
         } else if (member.getIsReady() == true) {
-            throw new PartyException("준비상태에서 파티를 나갈 수 없습니다.");
+            throw new SoloBobException(ErrorCode.PARTY_EXIT_READY);
         }
         party.deleteMember(member);
     }
@@ -75,16 +74,16 @@ public class PartyService {
                     if (readyStatus(party) == true){
                         party.startParty(member);
                     }else{
-                        throw new StartOrReadyException("모두 준비 상태여야 합니다.");
+                        throw new SoloBobException(ErrorCode.PARTY_SOR_READY);
                     }
                 }else{
-                    throw new StartOrReadyException("파티원이 2명 미만입니다.");
+                    throw new SoloBobException(ErrorCode.PARTY_SOR_NUM);
                 }
             }
         }else{      // 방장 아닌 경우
             if (member.getIsReady() == true) {  //파티 준비 취소
                 if (party.getMatchingStatus() == MatchingStatus.MATCHED) {  //이미 시작이 된 경우
-                    throw new StartOrReadyException("파티가 이미 시작되었습니다.");
+                    throw new SoloBobException(ErrorCode.PARTY_SOR_MATCH);
                 }else{  //파티 준비 취소 작업 가능
                     party.cancelReady(member);
                 }
@@ -119,7 +118,7 @@ public class PartyService {
     @Transactional
     public void initialMembers(Member member, Party party) {
         if (member.getOwner() == false) {
-            throw new PartyException("방장 권한 입니다");
+            throw new SoloBobException(ErrorCode.PARTY_DELETE_OWNER);
         }
         for (Member partyMember : party.getMembers()) {
             if (partyMember.getOwner() == true) { //프록시 객체 초기화 => (1)+1

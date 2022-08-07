@@ -3,7 +3,8 @@ package solobob.solobobmate.chat;
 import solobob.solobobmate.auth.config.SecurityUtil;
 import solobob.solobobmate.chat.chatDto.ChatDto;
 import solobob.solobobmate.chat.chatDto.ChatSendDto;
-import solobob.solobobmate.controller.exception.ExceptionMessages;
+import solobob.solobobmate.controller.exception.ErrorCode;
+import solobob.solobobmate.controller.exception.SoloBobException;
 import solobob.solobobmate.domain.Chat;
 import solobob.solobobmate.domain.Member;
 import solobob.solobobmate.domain.Party;
@@ -14,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,7 +32,7 @@ public class ChatController {
 
     public Member getMember() {
         Member member = memberRepository.findByLoginId(SecurityUtil.getCurrentMemberId()).orElseThrow(
-                () -> new EntityNotFoundException(ExceptionMessages.NOT_FOUND_MEMBER)
+                () -> new SoloBobException(ErrorCode.NOT_FOUND_MEMBER)
         );
         return member;
     }
@@ -61,7 +61,7 @@ public class ChatController {
     public void messageChat(@RequestBody ChatDto chatDto) {
         Member member = getMember();
         Party party = partyRepository.findById(chatDto.getPartyId()).orElseThrow(
-                () -> new IllegalArgumentException(ExceptionMessages.NOT_FOUND_PARTY)
+                () -> new SoloBobException(ErrorCode.NOT_FOUND_PARTY)
         );
         Chat chat = chatService.create(party, member, chatDto.getMessage());
 

@@ -3,7 +3,8 @@ package solobob.solobobmate.controller;
 import org.springframework.http.ResponseCookie;
 import org.springframework.web.bind.annotation.PostMapping;
 import solobob.solobobmate.auth.config.SecurityUtil;
-import solobob.solobobmate.controller.exception.ExceptionMessages;
+import solobob.solobobmate.controller.exception.ErrorCode;
+import solobob.solobobmate.controller.exception.SoloBobException;
 import solobob.solobobmate.controller.memberDto.MyPageDto;
 import solobob.solobobmate.domain.Member;
 import solobob.solobobmate.repository.MemberRepository;
@@ -11,7 +12,6 @@ import solobob.solobobmate.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,7 +30,7 @@ public class MemberController {
 
     public Member getMember() {
         Member member = memberRepository.findByLoginId(SecurityUtil.getCurrentMemberId()).orElseThrow(
-                () -> new EntityNotFoundException(ExceptionMessages.NOT_FOUND_MEMBER)
+                () -> new SoloBobException(ErrorCode.NOT_FOUND_MEMBER)
         );
         return member;
     }

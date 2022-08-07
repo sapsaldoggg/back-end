@@ -1,20 +1,12 @@
 package solobob.solobobmate.controller.exception;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public class SoloBobException extends RuntimeException{
 
-    public SoloBobException() {
-        super();
-    }
+    private final ErrorCode errorCode;
 
-    public SoloBobException(String message) {
-        super(message);
-    }
-
-    public SoloBobException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public SoloBobException(Throwable cause) {
-        super(cause);
-    }
 }

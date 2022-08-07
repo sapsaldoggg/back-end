@@ -9,7 +9,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import solobob.solobobmate.controller.exception.party.PartyException;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
@@ -50,27 +49,10 @@ public class GlobalExceptionHandler {
         return new ErrorResult("로그인 정보가 일치하지 않습니다");
     }
 
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResult handleEntityNotFoundException(EntityNotFoundException e) {
-        return new ErrorResult(e.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResult handlePartyException(PartyException e) {
-        return new ErrorResult(e.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResult handleIllegalStateException(IllegalStateException e) {
-        return new ErrorResult(e.getMessage());
-    }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResult handleDropTheCodeException(SoloBobException e) {
-        return new ErrorResult(e.getMessage());
+        return new ErrorResult(e.getErrorCode().getCode(), e.getErrorCode().getMessages());
     }
 }

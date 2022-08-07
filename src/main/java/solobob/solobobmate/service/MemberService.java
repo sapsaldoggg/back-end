@@ -1,5 +1,6 @@
 package solobob.solobobmate.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import solobob.solobobmate.controller.memberDto.JoinDto;
 import solobob.solobobmate.controller.memberDto.MyPageDto;
 import solobob.solobobmate.domain.Authority;
@@ -18,6 +19,8 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
+
 
 
     public MyPageDto detail(Member member) {
