@@ -32,20 +32,21 @@ public class PartyService {
 
     // 파티 수정
     @Transactional
-    public void update(Long id, String title, int maxNumber) {
-        Party party = partyRepository.findById(id).orElseThrow(
-                () -> new SoloBobException(ErrorCode.NOT_FOUND_PARTY)
-        );
+    public void update(Party party, String title, int maxNumber) {
         party.update(title, maxNumber);
     }
 
     //파티 참가
     @Transactional
     public Party join(Party party, Member member) {
-        if (party.getFullStatus() == FullStatus.FULL || member.getIsJoined()
-                || party.getMatchingStatus() == MatchingStatus.MATCHED) {
-            throw new SoloBobException(ErrorCode.PARTY_JOIN);
+        if (party.getFullStatus() == FullStatus.FULL) {
+            throw new SoloBobException(ErrorCode.PARTY_JOIN_FULL);
+        } else if (member.getIsJoined()) {
+            throw new SoloBobException(ErrorCode.PARTY_JOIN_JOINED);
+        } else if (party.getMatchingStatus() == MatchingStatus.MATCHED) {
+            throw new SoloBobException(ErrorCode.PARTY_JOIN_MATCHED);
         }
+
         party.addMember(member);
 
         return party;

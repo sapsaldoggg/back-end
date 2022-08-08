@@ -6,9 +6,9 @@ import lombok.Getter;
 
 
 @Getter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ErrorResult {
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private int code;
     private String message;
 

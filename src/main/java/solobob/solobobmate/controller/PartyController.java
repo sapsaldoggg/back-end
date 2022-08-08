@@ -57,6 +57,16 @@ public class PartyController {
                 ResponseEntity.ok(new PartyListDto(findParty.get().getId(), parties)) : ResponseEntity.ok(new PartyListDto(parties));
     }
 
+    // 내 파티 상세정보
+    @GetMapping("/party")
+    public ResponseEntity myParty() {
+        Member member = getMember();
+        Party party = partyRepository.findByOwnerNickName(member.getNickname()).orElseThrow(
+                () -> new SoloBobException(ErrorCode.NOT_FOUND_PARTY)
+        );
+        return ResponseEntity.ok(partyService.partyInfoReturn(party));
+    }
+
     //파티 생성
     @PostMapping("/party")
     public ResponseEntity create(@RequestBody @Validated PartyCreateDto partyDto,
@@ -73,6 +83,7 @@ public class PartyController {
 
     }
 
+    //파티 참가
     @PostMapping("/party/{party_id}/join")
     public ResponseEntity joinParty(@PathVariable(name = "party_id") Long id) {
         Member member = getMember();
@@ -86,7 +97,7 @@ public class PartyController {
         return ResponseEntity.ok(partyService.partyInfoReturn(party));
     }
 
-    //파티 참가
+
     //파티 나가기 (멤버만 가능, 방장 x)
     @PostMapping("/party/{party_id}/exit")
     public void exitParty(@PathVariable(name = "party_id") Long id) {
@@ -100,22 +111,16 @@ public class PartyController {
         partyService.exit(party, member);
     }
 
-    //파티 입장
-    @GetMapping("/party/{party_id}")
-    public ResponseEntity enter(@PathVariable(name = "party_id") Long id) {
-        Member member = getMember();
-        Party party = partyRepository.findWithMembersRestaurant(id).orElseThrow(
-                () -> new SoloBobException(ErrorCode.NOT_FOUND_PARTY)
-        );
 
-        return ResponseEntity.ok(partyService.partyInfoReturn(party));
-    }
+
 
     //파티 수정
     @PutMapping("/party/{party_id}")
     public void edit(@RequestBody PartyCreateDto partyDto, @PathVariable(name = "party_id") Long id) {
-
-        partyService.update(id, partyDto.getTitle(), partyDto.getMaximumCount());
+        Party party = partyRepository.findById(id).orElseThrow(
+                () -> new SoloBobException(ErrorCode.NOT_FOUND_PARTY)
+        );
+        partyService.update(party, partyDto.getTitle(), partyDto.getMaximumCount());
 
     }
 
