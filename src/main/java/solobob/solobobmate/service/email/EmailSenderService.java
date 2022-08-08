@@ -1,4 +1,4 @@
-package solobob.solobobmate.auth.email;
+package solobob.solobobmate.service.email;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;

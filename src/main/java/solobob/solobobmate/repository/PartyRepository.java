@@ -24,45 +24,31 @@ public class PartyRepository {
         em.persist(party);
     }
 
-    public List<Party> findAll() {
-        return em.createQuery("select p from Party p", Party.class)
-                .getResultList();
-    }
 
     public Optional<Party> findById(Long id) {
         return Optional.ofNullable(em.find(Party.class, id));
     }
 
-    /**
-     *
-     * @param id : 식당 객체
-     * @return : 식당에 해당하는 파티목록 반환
-     */
-    public List<Party> findByRestaurantId(Restaurant restaurant) {
-        return em.createQuery("select p from Party p where p.restaurant = :restaurant", Party.class)
-                .setParameter("restaurant", restaurant)
-                .getResultList();
-    }
+
 
     /**
      *
-     * @param : member 객체
-     * @return : 요청한 회원이 방장을 맡고 있는 파티가 있을 시 해당 파티 반환
+     * @param restaurant_id : 식당 아이디
+     * @return 식당에 포함되는 파티 목록 반환
      */
-    public Optional<Party> findPartyOwnerByMemberId(Member member) {
-        return em.createQuery("select p from Party p where p.member = :member", Party.class)
-                .setParameter("member", member)
-                .getResultList()
-                .stream()
-                .findFirst();
+    public List<Party> findWithRestaurant(Long restaurant_id) {
+        return em.createQuery("select p from Party p join fetch p.restaurant r where r.id = :id", Party.class)
+                .setParameter("id", restaurant_id)
+                .getResultList();
     }
+
+
 
     /**
      *
      * @param ownerName : 방장 이름
      * @return  방장 이름에 해당하는 파티 있을 시, 반환
      */
-
     public Optional<Party> findByOwnerNickName(String ownerName) {
         return em.createQuery("select p from Party p where p.owner = :owner", Party.class)
                 .setParameter("owner", ownerName)
@@ -71,7 +57,23 @@ public class PartyRepository {
     }
 
 
-    //파티 삭제
+    /**
+     * 파티 정보 반환
+     * @param id : 파티 아이디
+     * @return 참가원, 식당 정보 한꺼번에 조회
+     */
+    public Optional<Party> findWithMembersRestaurant(Long id) {
+        return em.createQuery("select distinct p from Party p join fetch p.members join fetch p.restaurant where p.id = :id ", Party.class)
+                .setParameter("id", id)
+                .getResultList()
+                .stream().findFirst();
+    }
+
+
+    /**
+     * 파티 삭제
+     * @param party
+     */
     public void removeParty(Party party) {
         em.remove(party);
     }

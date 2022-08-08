@@ -1,4 +1,4 @@
-package solobob.solobobmate.auth.email;
+package solobob.solobobmate.repository.email;
 
 import solobob.solobobmate.domain.email.VerifyCode;
 import lombok.RequiredArgsConstructor;
@@ -22,11 +22,10 @@ public class VerifyCodeRepository {
     }
 
 
-    public Optional<VerifyCode> find(String code, LocalDateTime now, Boolean expired) {
-        return em.createQuery("select v from VerifyCode v where v.code=:code and v.expired = :expired and v.expiredDate >= :expiredDate", VerifyCode.class)
+    public Optional<VerifyCode> find(String code, Boolean expired) {
+        return em.createQuery("select v from VerifyCode v where v.code=:code and v.expired = :expired", VerifyCode.class)
                 .setParameter("code", code)
                 .setParameter("expired", expired)
-                .setParameter("expiredDate", now)
                 .getResultList()
                 .stream()
                 .findFirst();

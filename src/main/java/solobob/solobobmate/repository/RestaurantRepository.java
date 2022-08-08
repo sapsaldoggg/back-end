@@ -25,6 +25,10 @@ public class RestaurantRepository {
         return Optional.ofNullable(em.find(Restaurant.class, id));
     }
 
+    /**
+     * 식당 조회
+     * @return 식당 리스트
+     */
     public List<Restaurant> findAll() {
         return em.createQuery("select r from Restaurant r", Restaurant.class)
                 .getResultList();

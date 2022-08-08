@@ -108,6 +108,7 @@ public class Party extends BaseEntity{
     public void startCancelParty(Member member) {
         member.setIsReady(false);
         this.matchingStatus = MatchingStatus.NON_MATCHED;
+        this.matchingStartTime = null;
     }
 
     //파티 시작
