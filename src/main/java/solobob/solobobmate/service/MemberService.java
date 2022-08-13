@@ -1,6 +1,8 @@
 package solobob.solobobmate.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import solobob.solobobmate.controller.exception.ErrorCode;
+import solobob.solobobmate.controller.exception.SoloBobException;
 import solobob.solobobmate.controller.memberDto.JoinDto;
 import solobob.solobobmate.controller.memberDto.MyPageDto;
 import solobob.solobobmate.domain.Authority;
@@ -34,6 +36,14 @@ public class MemberService {
                 .build();
 
         return myPageDto;
+    }
+
+    @Transactional
+    public void likeUp(Long member_id) {
+        Member findMember = memberRepository.findById(member_id).orElseThrow(
+                () -> new SoloBobException(ErrorCode.NOT_FOUND_MEMBER)
+        );
+        findMember.likeUp();
     }
 
 

@@ -61,6 +61,10 @@ public class Member extends BaseEntity{
     public void setIsReady(Boolean isReady) {
         this.isReady = isReady;
     }
+
+    public void likeUp() {
+        this.reliability++;
+    }
     //--------------------------------------------------------------------
 
     @Builder

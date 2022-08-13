@@ -1,7 +1,7 @@
 package solobob.solobobmate.controller;
 
 import org.springframework.http.ResponseCookie;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import solobob.solobobmate.auth.config.SecurityUtil;
 import solobob.solobobmate.controller.exception.ErrorCode;
 import solobob.solobobmate.controller.exception.SoloBobException;
@@ -12,12 +12,10 @@ import solobob.solobobmate.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -40,6 +38,12 @@ public class MemberController {
         Member member = getMember();
         MyPageDto my = memberService.detail(member);
         return ResponseEntity.ok(my);
+    }
+
+    //신뢰도 업
+    @PostMapping("/{member_id}/like")
+    public void memberLike(@PathVariable(name = "member_id") Long member_id) {
+        memberService.likeUp(member_id);
     }
 
     @PostMapping("/logout")

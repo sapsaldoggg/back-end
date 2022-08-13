@@ -26,7 +26,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class StompHandler implements ChannelInterceptor {
 
-    private final MemberRepository memberRepository;
     private final TokenProvider tokenProvider;
 
     @Override
