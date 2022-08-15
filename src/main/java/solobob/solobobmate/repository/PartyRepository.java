@@ -57,6 +57,7 @@ public class PartyRepository {
     }
 
 
+
     /**
      * 파티 정보 반환
      * @param id : 파티 아이디

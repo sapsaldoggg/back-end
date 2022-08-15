@@ -18,6 +18,7 @@ import javax.persistence.EntityNotFoundException;
 public class PartyService {
 
     private final PartyRepository partyRepository;
+    private final ChatRoomService chatRoomService;
 
     //파티 생성
     @Transactional
@@ -25,7 +26,8 @@ public class PartyService {
         if (member.getIsJoined() == true) {
             throw new SoloBobException(ErrorCode.PARTY_CREATE);
         }
-        Party party = Party.create(member, restaurant, title, maxNumber);
+        ChatRoom chatRoom = chatRoomService.create();
+        Party party = Party.create(member, restaurant, chatRoom, title, maxNumber);
         partyRepository.save(party);
         return party;
     }
@@ -107,11 +109,17 @@ public class PartyService {
         return true;
     }
 
+    //내 파티 정보
+    public PartyDto myPartyInfo(Member member) {
+        if (member.getParty() == null) {
+            throw new SoloBobException(ErrorCode.PARTY_MY_PARTY);
+        }
+        return partyInfoReturn(member.getParty());
+    }
+
     //파티생성, 참가 시 파티정보(참가자 목록) 반환 메소드
     public PartyDto partyInfoReturn(Party party) {
-
         return new PartyDto(party);
-
     }
 
 

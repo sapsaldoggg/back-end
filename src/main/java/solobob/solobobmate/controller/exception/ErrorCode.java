@@ -29,6 +29,7 @@ public enum ErrorCode {
     PARTY_EXIT_READY(2210, "준비상태에서 나갈 수 없습니다"),
 
     PARTY_DELETE_OWNER(2211, "방장권한입니다"),
+    PARTY_MY_PARTY(2212, "파타에 속해있지 않습니다"),
 
 
 

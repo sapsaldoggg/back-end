@@ -51,6 +51,13 @@ public class MemberRepository{
     }
 
 
+    //내 파티 정보 조회
+    public Optional<Member> findByLoginIdWithParty(String loginId) {
+        return em.createQuery("select m from Member m join fetch m.party where m.loginId = :loginId", Member.class)
+                .setParameter("loginId", loginId)
+                .getResultList()
+                .stream().findFirst();
+    }
 
 
 

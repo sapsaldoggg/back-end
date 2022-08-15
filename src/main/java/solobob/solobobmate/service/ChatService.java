@@ -13,10 +13,6 @@ public class ChatService {
 
     private final ChatRepository chatRepository;
 
-    public Chat create(Party party, Member member, String message) {
-        Chat chat = Chat.create(party, member, message);
-        chatRepository.save(chat);
-        return chat;
-    }
+
 
 }

@@ -12,6 +12,7 @@ import solobob.solobobmate.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import solobob.solobobmate.service.PartyService;
 
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletResponse;
@@ -25,6 +26,8 @@ public class MemberController {
 
     private final MemberRepository memberRepository;
     private final MemberService memberService;
+    private final PartyService partyService;
+
 
     public Member getMember() {
         Member member = memberRepository.findByLoginId(SecurityUtil.getCurrentMemberId()).orElseThrow(
@@ -44,6 +47,14 @@ public class MemberController {
     @PostMapping("/{member_id}/like")
     public void memberLike(@PathVariable(name = "member_id") Long member_id) {
         memberService.likeUp(member_id);
+    }
+
+    @GetMapping("/myParty")
+    public ResponseEntity myParty() {
+        Member member = memberRepository.findByLoginIdWithParty(SecurityUtil.getCurrentMemberId()).orElseThrow(
+                () -> new SoloBobException(ErrorCode.NOT_FOUND_MEMBER)
+        );
+        return ResponseEntity.ok(partyService.myPartyInfo(member));
     }
 
     @PostMapping("/logout")

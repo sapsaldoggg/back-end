@@ -19,6 +19,11 @@ public class Party extends BaseEntity{
     //---------------------------------------------------------------------
     @OneToMany(mappedBy = "party")
     private List<Member> members = new ArrayList<>();
+
+
+    @OneToOne(mappedBy = "party", fetch = FetchType.LAZY)
+    private ChatRoom chatRoom;
+
     //---------------------------------------------------------------------
 
     @JoinColumn(name = "restaurant_id")
@@ -43,16 +48,24 @@ public class Party extends BaseEntity{
     // 매칭됬을때, 시간
     private LocalDateTime matchingStartTime;
 
-    public static Party create(Member member, Restaurant restaurant, String title, int maxNumber) {
-        Party party = new Party();
-        party.owner = member.getNickname();
-
-        //----------member 관련-----------
-        party.members.add(member);
-        member.setParty(party);
-        member.setOwner(true);
+    public void initialOwner(Member member) {
+        member.setParty(this);
         member.setIsJoined(true);
-        //-------------------------------
+        member.setOwner(true);
+        this.members.add(member);
+        this.owner = member.getNickname();
+    }
+
+    public void initialChatRoom(ChatRoom chatRoom) {
+        this.chatRoom = chatRoom;
+        chatRoom.setParty(this);
+    }
+
+    public static Party create(Member member, Restaurant restaurant, ChatRoom chatRoom, String title, int maxNumber) {
+        Party party = new Party();
+
+        party.initialOwner(member);
+        party.initialChatRoom(chatRoom);
 
         party.restaurant = restaurant;
         party.title = title;
@@ -79,11 +92,6 @@ public class Party extends BaseEntity{
         if (this.currentNumber == this.maxNumber) {
             full(); //full 로 변경
         }
-    }
-
-    // 매칭상태로 변경(방장이 시작 눌렀을때)
-    public void matched() {
-        this.matchingStatus = MatchingStatus.MATCHED;
     }
 
     //인원 다참 상태 변경

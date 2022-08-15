@@ -57,21 +57,21 @@ public class ChatController {
 //    }
 
     // /pub/party/message 로 요청이 오면, 메시지 전송 (SEND)
-    @MessageMapping("/party/message")  // /pub/party/message
-    public void messageChat(@RequestBody ChatDto chatDto) {
-        Member member = getMember();
-        Party party = partyRepository.findById(chatDto.getPartyId()).orElseThrow(
-                () -> new SoloBobException(ErrorCode.NOT_FOUND_PARTY)
-        );
-        Chat chat = chatService.create(party, member, chatDto.getMessage());
-
-        ChatSendDto chatSendDto = ChatSendDto.builder()
-                .partyId(chat.getParty().getId())
-                .sender(chat.getMember().getNickname())
-                .message(chat.getMessage())
-                .sendTime(chat.getSendTime())
-                .build();
-
-        template.convertAndSend("/sub/party/" + chatDto.getPartyId()+"/chat", chatSendDto);
-    }
+//    @MessageMapping("/party/message")  // /pub/party/message
+//    public void messageChat(@RequestBody ChatDto chatDto) {
+//        Member member = getMember();
+//        Party party = partyRepository.findById(chatDto.getPartyId()).orElseThrow(
+//                () -> new SoloBobException(ErrorCode.NOT_FOUND_PARTY)
+//        );
+//        Chat chat = chatService.create(party, member, chatDto.getMessage());
+//
+//        ChatSendDto chatSendDto = ChatSendDto.builder()
+//                .partyId(chat.getParty().getId())
+//                .sender(chat.getMember().getNickname())
+//                .message(chat.getMessage())
+//                .sendTime(chat.getSendTime())
+//                .build();
+//
+//        template.convertAndSend("/sub/party/" + chatDto.getPartyId()+"/chat", chatSendDto);
+//    }
 }

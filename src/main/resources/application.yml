@@ -10,4 +10,4 @@ jwt:
 
 
 redis:
-  port:
+  port: 6379

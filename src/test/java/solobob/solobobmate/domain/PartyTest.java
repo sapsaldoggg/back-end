@@ -14,7 +14,8 @@ public class PartyTest {
     public Party basicCreate() {
         Member member = Member.builder().nickname("owner").build();
         Restaurant restaurant = Restaurant.builder().name("한신식당").build();
-        Party party = Party.create(member, restaurant, "111", 4);
+        ChatRoom chatRoom = new ChatRoom();
+        Party party = Party.create(member, restaurant, chatRoom, "111", 4);
         return party;
     }
 
@@ -68,6 +69,7 @@ public class PartyTest {
         assertThat(member.getIsJoined()).isEqualTo(false);
         assertThat(member.getParty()).isEqualTo(null);
     }
+
 
 
 }
