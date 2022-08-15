@@ -77,10 +77,9 @@ public class Party extends BaseEntity{
     }
 
     // 파티 수정
-    public Party update(String title, int maxNumber) {
+    public void update(String title, int maxNumber) {
         this.title = title;
         this.maxNumber = maxNumber;
-        return this;
     }
 
     //파티에 멤버 추가

@@ -25,9 +25,8 @@ public class PartyTest {
         //given
         Party party = basicCreate();
         //when
-        Party updateParty = party.update("222", 3);
+        party.update("222", 3);
         //then
-        assertThat(party).usingRecursiveComparison().isEqualTo(updateParty);
     }
 
     @DisplayName("파티 멤버 추가")

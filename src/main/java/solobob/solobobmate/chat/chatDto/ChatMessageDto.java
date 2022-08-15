@@ -7,9 +7,9 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class ChatSendDto {
+public class ChatMessageDto {
 
-    private Long partyId;  //굳이 필요는 없음
+    private long roomId;
 
     private String sender;
 

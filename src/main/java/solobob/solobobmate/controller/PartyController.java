@@ -57,15 +57,6 @@ public class PartyController {
                 ResponseEntity.ok(new PartyListDto(findParty.get().getId(), parties)) : ResponseEntity.ok(new PartyListDto(parties));
     }
 
-    // 내 파티 상세정보
-    @GetMapping("/party")
-    public ResponseEntity myParty() {
-        Member member = getMember();
-        Party party = partyRepository.findByOwnerNickName(member.getNickname()).orElseThrow(
-                () -> new SoloBobException(ErrorCode.NOT_FOUND_PARTY)
-        );
-        return ResponseEntity.ok(partyService.partyInfoReturn(party));
-    }
 
     //파티 생성
     @PostMapping("/party")
@@ -92,9 +83,8 @@ public class PartyController {
                 () -> new SoloBobException(ErrorCode.NOT_FOUND_PARTY)
         );
 
-        partyService.join(party, member);
+        return ResponseEntity.ok(partyService.join(party, member));
 
-        return ResponseEntity.ok(partyService.partyInfoReturn(party));
     }
 
 
@@ -115,6 +105,7 @@ public class PartyController {
 
 
     //파티 수정
+    // 늘리는 것만 가능
     @PutMapping("/party/{party_id}")
     public void edit(@RequestBody PartyCreateDto partyDto, @PathVariable(name = "party_id") Long id) {
         Party party = partyRepository.findById(id).orElseThrow(
@@ -145,7 +136,10 @@ public class PartyController {
                 () -> new SoloBobException(ErrorCode.NOT_FOUND_PARTY)
         );
 
-        partyService.initialMembers(member, party);
+        if (member.getOwner() == false) {
+            throw new SoloBobException(ErrorCode.PARTY_DELETE_OWNER);
+        }
+        partyService.initialMembers(party);
     }
 
 

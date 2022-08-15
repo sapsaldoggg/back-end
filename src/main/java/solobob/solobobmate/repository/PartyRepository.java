@@ -59,15 +59,12 @@ public class PartyRepository {
 
 
     /**
-     * 파티 정보 반환
-     * @param id : 파티 아이디
-     * @return 참가원, 식당 정보 한꺼번에 조회
+     * 파티 리스트 반환
+     * @return 참가원 한꺼번에 조회
      */
-    public Optional<Party> findWithMembersRestaurant(Long id) {
-        return em.createQuery("select distinct p from Party p join fetch p.members join fetch p.restaurant where p.id = :id ", Party.class)
-                .setParameter("id", id)
-                .getResultList()
-                .stream().findFirst();
+    public List<Party> findAllWithMembers() {
+        return em.createQuery("select distinct p from Party p join fetch p.members ", Party.class)
+                .getResultList();
     }
 
 

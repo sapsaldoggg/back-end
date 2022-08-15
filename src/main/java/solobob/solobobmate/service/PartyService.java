@@ -11,6 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -35,12 +38,15 @@ public class PartyService {
     // 파티 수정
     @Transactional
     public void update(Party party, String title, int maxNumber) {
+        if (party.getMaxNumber() > maxNumber) {
+            throw new SoloBobException(ErrorCode.PARTY_UPDATE);
+        }
         party.update(title, maxNumber);
     }
 
     //파티 참가
     @Transactional
-    public Party join(Party party, Member member) {
+    public PartyDto join(Party party, Member member) {
         if (party.getFullStatus() == FullStatus.FULL) {
             throw new SoloBobException(ErrorCode.PARTY_JOIN_FULL);
         } else if (member.getIsJoined()) {
@@ -51,7 +57,7 @@ public class PartyService {
 
         party.addMember(member);
 
-        return party;
+        return partyInfoReturn(party);
     }
 
     // 파티 나가기 (멤버만 가능, 방장x)
@@ -125,10 +131,7 @@ public class PartyService {
 
     //파티 삭제 (방장 권한)
     @Transactional
-    public void initialMembers(Member member, Party party) {
-        if (member.getOwner() == false) {
-            throw new SoloBobException(ErrorCode.PARTY_DELETE_OWNER);
-        }
+    public void initialMembers(Party party) {
         for (Member partyMember : party.getMembers()) {
             if (partyMember.getOwner() == true) { //프록시 객체 초기화 => (1)+1
                 partyMember.setOwner(false);
@@ -141,18 +144,18 @@ public class PartyService {
         partyRepository.removeParty(party);
     }
 
-//    @Transactional
-//    public void removePartyScheduler() {
-//        List<Party> parties = partyRepository.findAll();
-//        for (Party party : parties) {
-//            if (party.getMatchingStatus() == MatchingStatus.MATCHED) {
-//                Duration duration = Duration.between(party.getMatchingStartTime(), LocalDateTime.now());
-//                if (duration.getSeconds() >= 7200) {   //2시간 지나면
-//                    initialMembers(party);
-//                }
-//            }
-//        }
-//    }
+
+    public void removePartyScheduler() {
+        List<Party> parties = partyRepository.findAllWithMembers();
+        for (Party party : parties) {
+            if (party.getMatchingStatus() == MatchingStatus.MATCHED) {
+                Duration duration = Duration.between(party.getMatchingStartTime(), LocalDateTime.now());
+                if (duration.getSeconds() >= 7200) {   //2시간 지나면
+                    initialMembers(party);
+                }
+            }
+        }
+    }
 
 
 }

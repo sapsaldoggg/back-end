@@ -31,6 +31,8 @@ public enum ErrorCode {
     PARTY_DELETE_OWNER(2211, "방장권한입니다"),
     PARTY_MY_PARTY(2212, "파타에 속해있지 않습니다"),
 
+    PARTY_UPDATE(2213, "최대 인원수보다 적습니다"),
+
 
 
     // restaurant
