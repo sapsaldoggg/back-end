@@ -24,6 +24,7 @@ public class MemberRepository{
         return Optional.ofNullable(em.find(Member.class, id));
     }
 
+
     public List<Member> findAll() {
         return em.createQuery("select m from Member m", Member.class)
                 .getResultList();
@@ -51,9 +52,15 @@ public class MemberRepository{
     }
 
 
-    //내 파티 정보 조회
+    //내 파티 정보 조회 (멤버 + 파티 + 식당 + 채팅방)
     public Optional<Member> findByLoginIdWithParty(String loginId) {
-        return em.createQuery("select m from Member m join fetch m.party p join fetch p.restaurant where m.loginId = :loginId", Member.class)
+        return em.createQuery("select distinct m from Member m " +
+                        "join fetch m.party p " +
+                        "join fetch p.restaurant " +
+                        "join fetch p.chatRoom " +
+                                "join fetch p.members " +
+                        "where m.loginId = :loginId"
+                        , Member.class)
                 .setParameter("loginId", loginId)
                 .getResultList()
                 .stream().findFirst();

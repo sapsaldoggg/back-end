@@ -21,7 +21,7 @@ public class ChatRoom {
     @OneToMany(mappedBy = "chatRoom")
     private List<Chat> chats = new ArrayList<>();
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "party_id")
     private Party party;
 

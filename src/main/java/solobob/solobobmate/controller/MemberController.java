@@ -45,10 +45,14 @@ public class MemberController {
 
     //신뢰도 업
     @PostMapping("/{member_id}/like")
-    public void memberLike(@PathVariable(name = "member_id") Long member_id) {
-        memberService.likeUp(member_id);
+    public void memberLike(@PathVariable(name = "member_id") Long id) {
+        Member member = memberRepository.findById(id).orElseThrow(
+                () -> new SoloBobException(ErrorCode.NOT_FOUND_MEMBER)
+        );
+        memberService.likeUp(member);
     }
 
+    // 고쳐야됨
     @GetMapping("/myParty")
     public ResponseEntity myParty() {
         Member member = memberRepository.findByLoginIdWithParty(SecurityUtil.getCurrentMemberId()).orElseThrow(
@@ -70,4 +74,6 @@ public class MemberController {
 
         response.setHeader("Set-Cookie", cookie.toString());
     }
+
+
 }

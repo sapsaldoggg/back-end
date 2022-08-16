@@ -20,7 +20,7 @@ public class Party extends BaseEntity{
     @OneToMany(mappedBy = "party")
     private List<Member> members = new ArrayList<>();
 
-
+    // 일대일 관계에서는 지연로딩 작동x (프록시 객체 초기화 불가능 이유)
     @OneToOne(mappedBy = "party", fetch = FetchType.LAZY)
     private ChatRoom chatRoom;
 
@@ -45,7 +45,7 @@ public class Party extends BaseEntity{
 
     private Integer currentNumber;
 
-    // 매칭됬을때, 시간
+    // 매칭됬을때, 시간 - 미적용
     private LocalDateTime matchingStartTime;
 
     public void initialOwner(Member member) {
@@ -106,7 +106,7 @@ public class Party extends BaseEntity{
     public void deleteMember(Member member) {
         member.setParty(null);
         member.setIsJoined(false);
-        this.getMembers().remove(member);
+        this.getMembers().remove(member);  //추가 쿼리 발생
         this.currentNumber--;
         nonFull();
     }

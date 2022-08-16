@@ -59,6 +59,7 @@ public class PartyController {
 
 
     //파티 생성
+    //1차 캐시에서 조회하므로 성능최적화 필요x
     @PostMapping("/party")
     public ResponseEntity create(@RequestBody @Validated PartyCreateDto partyDto,
                          @PathVariable(name = "restaurant_id") Long id) {
@@ -75,11 +76,12 @@ public class PartyController {
     }
 
     //파티 참가
+    // n+1 발생 (멤버+식당+채팅방)
     @PostMapping("/party/{party_id}/join")
     public ResponseEntity joinParty(@PathVariable(name = "party_id") Long id) {
         Member member = getMember();
 
-        Party party = partyRepository.findById(id).orElseThrow(
+        Party party = partyRepository.findWithAllById(id).orElseThrow(
                 () -> new SoloBobException(ErrorCode.NOT_FOUND_PARTY)
         );
 
@@ -89,6 +91,7 @@ public class PartyController {
 
 
     //파티 나가기 (멤버만 가능, 방장 x)
+    // n+1 발생
     @PostMapping("/party/{party_id}/exit")
     public void exitParty(@PathVariable(name = "party_id") Long id) {
 
@@ -105,7 +108,7 @@ public class PartyController {
 
 
     //파티 수정
-    // 늘리는 것만 가능
+    //인원수 늘리기만 가능
     @PutMapping("/party/{party_id}")
     public void edit(@RequestBody PartyCreateDto partyDto, @PathVariable(name = "party_id") Long id) {
         Party party = partyRepository.findById(id).orElseThrow(
@@ -115,7 +118,7 @@ public class PartyController {
 
     }
 
-    // 파티 준비 or 시작
+    // 파티 준비 or 시작 - 추가쿼리발생x
     @PostMapping("/party/{party_id}/ready")
     public void ready(@PathVariable("party_id") Long id) {
         Member member = getMember();
@@ -127,19 +130,16 @@ public class PartyController {
         partyService.startOrReady(party, member);
     }
 
-    // 파티 삭제 (방장권한)
+    // 파티 삭제 (방장권한) - n+1 발생
     @DeleteMapping("/party/{party_id}")
     public void delete(@PathVariable("party_id") Long id) {
         Member member = getMember();
-
+        log.info("id ={}", id);
         Party party = partyRepository.findById(id).orElseThrow(
                 () -> new SoloBobException(ErrorCode.NOT_FOUND_PARTY)
         );
-
-        if (member.getOwner() == false) {
-            throw new SoloBobException(ErrorCode.PARTY_DELETE_OWNER);
-        }
-        partyService.initialMembers(party);
+        log.info("============================");
+        //partyService.initialMembers(member, party);
     }
 
 

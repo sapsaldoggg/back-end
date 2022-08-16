@@ -39,11 +39,8 @@ public class MemberService {
     }
 
     @Transactional
-    public void likeUp(Long member_id) {
-        Member findMember = memberRepository.findById(member_id).orElseThrow(
-                () -> new SoloBobException(ErrorCode.NOT_FOUND_MEMBER)
-        );
-        findMember.likeUp();
+    public void likeUp(Member member) {
+        member.likeUp();
     }
 
 

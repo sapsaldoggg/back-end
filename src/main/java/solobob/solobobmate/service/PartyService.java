@@ -131,7 +131,10 @@ public class PartyService {
 
     //파티 삭제 (방장 권한)
     @Transactional
-    public void initialMembers(Party party) {
+    public void initialMembers(Member member, Party party) {
+        if (member.getOwner() == false) {
+            throw new SoloBobException(ErrorCode.PARTY_DELETE_OWNER);
+        }
         for (Member partyMember : party.getMembers()) {
             if (partyMember.getOwner() == true) { //프록시 객체 초기화 => (1)+1
                 partyMember.setOwner(false);
@@ -141,21 +144,22 @@ public class PartyService {
             partyMember.setIsReady(false);
         }
         party.getMembers().clear();
+        party.getChatRoom().setParty(null);
         partyRepository.removeParty(party);
     }
 
 
-    public void removePartyScheduler() {
-        List<Party> parties = partyRepository.findAllWithMembers();
-        for (Party party : parties) {
-            if (party.getMatchingStatus() == MatchingStatus.MATCHED) {
-                Duration duration = Duration.between(party.getMatchingStartTime(), LocalDateTime.now());
-                if (duration.getSeconds() >= 7200) {   //2시간 지나면
-                    initialMembers(party);
-                }
-            }
-        }
-    }
+//    public void removePartyScheduler() {
+//        List<Party> parties = partyRepository.findAllWithMembers();
+//        for (Party party : parties) {
+//            if (party.getMatchingStatus() == MatchingStatus.MATCHED) {
+//                Duration duration = Duration.between(party.getMatchingStartTime(), LocalDateTime.now());
+//                if (duration.getSeconds() >= 7200) {   //2시간 지나면
+//                    initialMembers(party);
+//                }
+//            }
+//        }
+//    }
 
 
 }
