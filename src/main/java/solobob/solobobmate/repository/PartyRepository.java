@@ -45,6 +45,15 @@ public class PartyRepository {
                 .stream().findFirst();
     }
 
+    public Optional<Party> findWithChat(Long id) {
+        return em.createQuery("select distinct p from Party p " +
+                "join fetch p.chatRoom cr " +
+                "join fetch cr.chats " +
+                "where p.id = :id", Party.class)
+                .setParameter("id", id)
+                .getResultList().stream().findFirst();
+    }
+
 
 
     /**

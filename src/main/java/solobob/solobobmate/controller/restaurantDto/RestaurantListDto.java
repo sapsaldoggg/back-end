@@ -15,7 +15,7 @@ public class RestaurantListDto {
 
     private String address;
 
-    private double longtitude;   //경도
+    private double longitude;   //경도
 
     private double latitude;    //위도
 
@@ -24,7 +24,7 @@ public class RestaurantListDto {
         this.name = restaurant.getName();
         this.category = restaurant.getCategory();
         this.address = restaurant.getAddress();
-        this.longtitude = restaurant.getLongtitude();
+        this.longitude = restaurant.getLongtitude();
         this.latitude = restaurant.getLatitude();
     }
 }

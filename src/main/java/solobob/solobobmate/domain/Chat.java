@@ -15,9 +15,7 @@ public class Chat extends BaseEntity{
     private Long id;
 
 
-    @JoinColumn(name = "member_id")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Member member;
+    private String sender;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chatRoom_id")
@@ -30,10 +28,10 @@ public class Chat extends BaseEntity{
         this.chatRoom = chatRoom;
     }
 
-    public static Chat create(ChatRoom chatRoom, Member member, String message) {
+    public static Chat create(ChatRoom chatRoom, String sender, String message) {
         Chat chat = new Chat();
         chat.addChat(chatRoom);
-        chat.member = member;
+        chat.sender = sender;
         chat.message = message;
         return chat;
     }

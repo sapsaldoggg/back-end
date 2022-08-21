@@ -21,7 +21,7 @@ public class Restaurant {
 
     private String address;
 
-    private double longtitude;   //경도
+    private double longitude;   //경도
 
     private double latitude;    //위도
 

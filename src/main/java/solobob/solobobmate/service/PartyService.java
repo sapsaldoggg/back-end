@@ -4,6 +4,8 @@ import solobob.solobobmate.controller.exception.ErrorCode;
 import solobob.solobobmate.controller.exception.SoloBobException;
 import solobob.solobobmate.controller.partyDto.PartyDto;
 import solobob.solobobmate.domain.*;
+import solobob.solobobmate.repository.ChatRepository;
+import solobob.solobobmate.repository.ChatRoomRepository;
 import solobob.solobobmate.repository.PartyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +23,8 @@ import java.util.List;
 public class PartyService {
 
     private final PartyRepository partyRepository;
+    private final ChatRoomRepository chatRoomRepository;
+
     private final ChatRoomService chatRoomService;
 
     //파티 생성
@@ -145,7 +149,13 @@ public class PartyService {
         }
         party.getMembers().clear();
         party.getChatRoom().setParty(null);
+        party.getChatRoom().setParty(null);
+        party.getChatRoom().getChats().clear();
+
+        chatRoomRepository.delete(party.getChatRoom());
+
         partyRepository.removeParty(party);
+
     }
 
 

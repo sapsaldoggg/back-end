@@ -97,7 +97,7 @@ public class PartyController {
 
         Member member = getMember();
 
-        Party party = partyRepository.findById(id).orElseThrow(
+        Party party = partyRepository.findWithAllById(id).orElseThrow(
                 () -> new SoloBobException(ErrorCode.NOT_FOUND_PARTY)
         );
 
@@ -135,11 +135,11 @@ public class PartyController {
     public void delete(@PathVariable("party_id") Long id) {
         Member member = getMember();
         log.info("id ={}", id);
-        Party party = partyRepository.findById(id).orElseThrow(
+        Party party = partyRepository.findWithAllById(id).orElseThrow(
                 () -> new SoloBobException(ErrorCode.NOT_FOUND_PARTY)
         );
         log.info("============================");
-        //partyService.initialMembers(member, party);
+        partyService.initialMembers(member, party);
     }
 
 

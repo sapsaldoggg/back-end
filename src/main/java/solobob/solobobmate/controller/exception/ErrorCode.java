@@ -36,7 +36,9 @@ public enum ErrorCode {
 
 
     // restaurant
-    NOT_FOUND_RESTAURANT(2300, "식당이 존재하지 않습니다");
+    NOT_FOUND_RESTAURANT(2300, "식당이 존재하지 않습니다"),
+
+    NOT_FOUNT_CHATROOM(2400, "채팅방이 존재하지 않습니다");
 
 
 
