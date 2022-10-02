@@ -13,6 +13,8 @@ public class PartyListDto {
 
     private Long partyId;
 
+    private Long restaurantId;
+
     private List<PartyInfoDto> parties;
 
 
@@ -20,8 +22,9 @@ public class PartyListDto {
         this.parties = parties.stream().map(p -> new PartyInfoDto(p)).collect(Collectors.toList());
     }
 
-    public PartyListDto(Long partyId, List<Party> parties) {
+    public PartyListDto(Long partyId, Long restaurantId, List<Party> parties) {
         this.partyId = partyId;
+        this.restaurantId = restaurantId;
         this.parties = parties.stream().map(p -> new PartyInfoDto(p)).collect(Collectors.toList());
     }
 }

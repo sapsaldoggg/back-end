@@ -158,6 +158,19 @@ public class PartyService {
 
     }
 
+    // 파티원 강퇴 (방장 권한 - 매칭 되어도 강퇴 가능)
+    @Transactional
+    public void kickOutMember(Member member, Member kickMember, Party party){
+        if (member.getOwner() == false) {
+            throw new SoloBobException(ErrorCode.PARTY_DELETE_OWNER);
+        }
+        if (!party.getMembers().contains(kickMember)){
+            throw new SoloBobException(ErrorCode.PARTY_MY_PARTY);
+        }
+
+        party.deleteMember(kickMember);
+    }
+
 
 //    public void removePartyScheduler() {
 //        List<Party> parties = partyRepository.findAllWithMembers();

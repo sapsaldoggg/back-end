@@ -4,6 +4,7 @@ package solobob.solobobmate.controller;
 import solobob.solobobmate.auth.config.SecurityUtil;
 import solobob.solobobmate.controller.exception.ErrorCode;
 import solobob.solobobmate.controller.exception.SoloBobException;
+import solobob.solobobmate.controller.memberDto.MemberIdDto;
 import solobob.solobobmate.controller.partyDto.*;
 import solobob.solobobmate.domain.Member;
 import solobob.solobobmate.domain.Party;
@@ -54,7 +55,7 @@ public class PartyController {
         List<Party> parties = partyRepository.findWithRestaurant(id);
 
         return findParty.isPresent() ?
-                ResponseEntity.ok(new PartyListDto(findParty.get().getId(), parties)) : ResponseEntity.ok(new PartyListDto(parties));
+                ResponseEntity.ok(new PartyListDto(findParty.get().getId(), findParty.get().getRestaurant().getId(), parties)) : ResponseEntity.ok(new PartyListDto(parties));
     }
 
 
@@ -120,7 +121,7 @@ public class PartyController {
 
     // 파티 준비 or 시작 - 추가쿼리발생x
     @PostMapping("/party/{party_id}/ready")
-    public void ready(@PathVariable("party_id") Long id) {
+    public ResponseEntity ready(@PathVariable("party_id") Long id) {
         Member member = getMember();
 
         Party party = partyRepository.findById(id).orElseThrow(
@@ -128,6 +129,8 @@ public class PartyController {
         );
 
         partyService.startOrReady(party, member);
+
+        return ResponseEntity.ok(partyService.partyInfoReturn(party));
     }
 
     // 파티 삭제 (방장권한) - n+1 발생
@@ -140,6 +143,24 @@ public class PartyController {
         );
         log.info("============================");
         partyService.initialMembers(member, party);
+    }
+
+    // 파티원 강퇴 (방장권한)
+    @PostMapping("/party/{party_id}/kick-out")
+    public ResponseEntity kickOut(@PathVariable("party_id") Long id, @RequestBody MemberIdDto memberIdDto){
+        Member member = getMember();
+
+        Member kickMember = memberRepository.findById(memberIdDto.getMemberId()).orElseThrow(
+                () -> new SoloBobException(ErrorCode.NOT_FOUND_MEMBER)
+        );
+
+        Party party = partyRepository.findById(id).orElseThrow(
+                () -> new SoloBobException(ErrorCode.NOT_FOUND_PARTY)
+        );
+
+        partyService.kickOutMember(member, kickMember, party);
+
+        return ResponseEntity.ok(partyService.partyInfoReturn(party));
     }
 
 

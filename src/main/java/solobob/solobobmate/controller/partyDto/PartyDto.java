@@ -17,7 +17,7 @@ public class PartyDto {
     private Long id;
 
     private Long chatRoom_id;
-
+    private Long restaurantId;
     private String restaurant;
 
     private String title;
@@ -35,6 +35,7 @@ public class PartyDto {
     public PartyDto(Party party) {
         this.id = party.getId();
         this.chatRoom_id = party.getChatRoom().getId();
+        this.restaurantId = party.getRestaurant().getId();
         this.restaurant = party.getRestaurant().getName();
         this.title = party.getTitle();
         this.status = party.getMatchingStatus();
