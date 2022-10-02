@@ -2,7 +2,11 @@ package solobob.solobobmate.controller;
 
 import org.springframework.http.ResponseCookie;
 import solobob.solobobmate.auth.jwt.TokenDto;
+import solobob.solobobmate.controller.exception.ErrorCode;
+import solobob.solobobmate.controller.exception.SoloBobException;
 import solobob.solobobmate.controller.memberDto.LoginDto;
+import solobob.solobobmate.controller.memberDto.MemberIdDto;
+import solobob.solobobmate.domain.Member;
 import solobob.solobobmate.service.AuthService;
 import solobob.solobobmate.service.email.VerifyCodeService;
 import solobob.solobobmate.controller.memberDto.JoinDto;
@@ -16,8 +20,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -42,12 +44,18 @@ public class AuthController {
      * 로그인 성공 시, header(Authorization) : accessToken, Cookie : refreshToken 응답
      */
     @PostMapping("/login")
-    public void login(@RequestBody @Validated LoginDto loginDto, HttpServletResponse response) {
+    public ResponseEntity login(@RequestBody @Validated LoginDto loginDto, HttpServletResponse response) {
 
         TokenDto tokenDto = authService.login(loginDto);
 
         response.setHeader("Authorization", "Bearer "+tokenDto.getAccessToken());
         response.setHeader("Set-Cookie", setRefreshToken(tokenDto.getRefreshToken()).toString());
+
+        Member member = memberRepository.findByLoginId(loginDto.getLoginId()).orElseThrow(
+                () -> new SoloBobException(ErrorCode.NOT_FOUND_MEMBER)
+        );
+
+        return ResponseEntity.ok(new MemberIdDto(member.getId()));
     }
 
     public ResponseCookie setRefreshToken(String refreshToken) {
