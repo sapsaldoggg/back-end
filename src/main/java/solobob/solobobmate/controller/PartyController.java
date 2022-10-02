@@ -6,6 +6,7 @@ import solobob.solobobmate.controller.exception.ErrorCode;
 import solobob.solobobmate.controller.exception.SoloBobException;
 import solobob.solobobmate.controller.memberDto.MemberIdDto;
 import solobob.solobobmate.controller.partyDto.*;
+import solobob.solobobmate.controller.reportDto.ReportDto;
 import solobob.solobobmate.domain.Member;
 import solobob.solobobmate.domain.Party;
 import solobob.solobobmate.domain.Restaurant;
@@ -18,8 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import solobob.solobobmate.service.ReportService;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,6 +34,7 @@ public class PartyController {
 
     private final PartyRepository partyRepository;
     private final PartyService partyService;
+    private final ReportService reportService;
 
     private final RestaurantRepository restaurantRepository;
 
@@ -63,7 +65,7 @@ public class PartyController {
     //1차 캐시에서 조회하므로 성능최적화 필요x
     @PostMapping("/party")
     public ResponseEntity create(@RequestBody @Validated PartyCreateDto partyDto,
-                         @PathVariable(name = "restaurant_id") Long id) {
+                                 @PathVariable(name = "restaurant_id") Long id) {
         Member member = getMember();
 
         Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(
@@ -95,7 +97,6 @@ public class PartyController {
     // n+1 발생
     @PostMapping("/party/{party_id}/exit")
     public void exitParty(@PathVariable(name = "party_id") Long id) {
-
         Member member = getMember();
 
         Party party = partyRepository.findWithAllById(id).orElseThrow(
@@ -145,6 +146,7 @@ public class PartyController {
         partyService.initialMembers(member, party);
     }
 
+
     // 파티원 강퇴 (방장권한)
     @PostMapping("/party/{party_id}/kick-out")
     public ResponseEntity kickOut(@PathVariable("party_id") Long id, @RequestBody MemberIdDto memberIdDto){
@@ -164,5 +166,37 @@ public class PartyController {
     }
 
 
+    // 파티원 신고
+    @PostMapping("/party/{party_id}/report")
+    public ResponseEntity reportMember(@PathVariable("party_id") Long id, @RequestBody ReportDto reportDto){
+        Member fromMember = getMember();
+
+        Member toMember = memberRepository.findById(reportDto.getMemberId()).orElseThrow(
+                () -> new SoloBobException(ErrorCode.NOT_FOUND_MEMBER)
+        );
+
+        Party party = partyRepository.findById(id).orElseThrow(
+                () -> new SoloBobException(ErrorCode.NOT_FOUND_PARTY)
+        );
+
+        reportService.reportMember(fromMember, toMember, party, reportDto);
+
+        return ResponseEntity.ok(true);
+    }
+
+
+    // 파티원 신고 내역 조회
+    @PostMapping("/party/{party_id}/reports")
+    public ResponseEntity memberReports(@PathVariable("party_id") Long id, @RequestBody MemberIdDto memberIdDto){
+        Member inquiryMember = memberRepository.findById(memberIdDto.getMemberId()).orElseThrow(
+                () -> new SoloBobException(ErrorCode.NOT_FOUND_MEMBER)
+        );
+
+        Party party = partyRepository.findById(id).orElseThrow(
+                () -> new SoloBobException(ErrorCode.NOT_FOUND_PARTY)
+        );
+
+        return ResponseEntity.ok(reportService.reportInfoReturn(inquiryMember, party));
+    }
 
 }

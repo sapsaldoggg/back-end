@@ -3,6 +3,7 @@ package solobob.solobobmate.service;
 import solobob.solobobmate.controller.exception.ErrorCode;
 import solobob.solobobmate.controller.exception.SoloBobException;
 import solobob.solobobmate.controller.partyDto.PartyDto;
+import solobob.solobobmate.controller.reportDto.ReportDto;
 import solobob.solobobmate.domain.*;
 import solobob.solobobmate.repository.ChatRepository;
 import solobob.solobobmate.repository.ChatRoomRepository;
@@ -26,6 +27,7 @@ public class PartyService {
     private final ChatRoomRepository chatRoomRepository;
 
     private final ChatRoomService chatRoomService;
+    private final ReportService reportService;
 
     //파티 생성
     @Transactional
@@ -70,15 +72,27 @@ public class PartyService {
         if (member.getOwner() == true) {
             throw new SoloBobException(ErrorCode.PARTY_EXIT_OWNER);
         } else if (party.getMatchingStatus() == MatchingStatus.MATCHED) {
-            throw new SoloBobException(ErrorCode.PARTY_EXIT_MATCH);
-        } else if (member.getIsReady() == true) {
-            throw new SoloBobException(ErrorCode.PARTY_EXIT_READY);
+            // 매칭 상태에서 나가면 신고 1스택 쌓임 (탈주항목으로 신고한 것으로 됨)
+            reportService.reportMember(party.getMembers().get(0), member, party, new ReportDto(member.getId(), ReportType.ESCAPE, "탈주로 인해 자동으로 신고되었습니다."));
         }
         party.deleteMember(member);
+
+//        if (member.getOwner() == true) {
+//            throw new SoloBobException(ErrorCode.PARTY_EXIT_OWNER);
+//        } else if (party.getMatchingStatus() == MatchingStatus.MATCHED) {
+//            throw new SoloBobException(ErrorCode.PARTY_EXIT_MATCH);
+//        } else if (member.getIsReady() == true) {
+//            throw new SoloBobException(ErrorCode.PARTY_EXIT_READY);
+//        }
+//        party.deleteMember(member);
     }
 
     @Transactional
     public void startOrReady(Party party, Member member) {
+        if (member.getParty().getId() != party.getId()){
+            throw new SoloBobException(ErrorCode.PARTY_MY_PARTY);
+        }
+
         if (member.getOwner() == true){  //방장인 경우
             if (member.getIsReady() == true) {  // 파티 시작 취소
                 party.startCancelParty(member);
@@ -157,6 +171,7 @@ public class PartyService {
         partyRepository.removeParty(party);
 
     }
+
 
     // 파티원 강퇴 (방장 권한 - 매칭 되어도 강퇴 가능)
     @Transactional
