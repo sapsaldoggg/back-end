@@ -1,9 +1,7 @@
 package solobob.solobobmate.repository;
 
 
-import solobob.solobobmate.domain.Member;
 import solobob.solobobmate.domain.Party;
-import solobob.solobobmate.domain.Restaurant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +27,20 @@ public class PartyRepository {
         return Optional.ofNullable(em.find(Party.class, id));
     }
 
+    public List<Party> findPartiesByCreatedDateDesc(int offset){
+        return em.createQuery("select distinct p from Party p order by p.createAt desc")
+                .setFirstResult(offset)
+                .setMaxResults(10)
+                .getResultList();
+    }
+
+    public List<Party> findWithKeyword(String keyword, int offset){
+        return em.createQuery("select distinct p from Party p where p.title like CONCAT('%', :keyword, '%') order by p.createAt desc")
+                .setParameter("keyword", keyword)
+                .setFirstResult(offset)
+                .setMaxResults(10)
+                .getResultList();
+    }
 
     /**
      * @param id
@@ -36,10 +48,10 @@ public class PartyRepository {
      */
     public Optional<Party> findWithAllById(Long id) {
         return em.createQuery("select distinct p from Party p " +
-                "join fetch p.members " +
-                "join fetch p.restaurant " +
-                "join fetch p.chatRoom " +
-                "where p.id = :id", Party.class)
+                        "join fetch p.members " +
+                        "join fetch p.restaurant " +
+                        "join fetch p.chatRoom " +
+                        "where p.id = :id", Party.class)
                 .setParameter("id", id)
                 .getResultList()
                 .stream().findFirst();
@@ -47,9 +59,9 @@ public class PartyRepository {
 
     public Optional<Party> findWithChat(Long id) {
         return em.createQuery("select distinct p from Party p " +
-                "join fetch p.chatRoom cr " +
-                "join fetch cr.chats " +
-                "where p.id = :id", Party.class)
+                        "join fetch p.chatRoom cr " +
+                        "join fetch cr.chats " +
+                        "where p.id = :id", Party.class)
                 .setParameter("id", id)
                 .getResultList().stream().findFirst();
     }
@@ -74,7 +86,7 @@ public class PartyRepository {
      * @param ownerName : 방장 이름
      * @return  방장 이름에 해당하는 파티 있을 시, 반환
      */
-    public Optional<Party> findByOwnerNickName(String ownerName) {
+    public Optional<Party> findByOwnerNickname(String ownerName) {
         return em.createQuery("select p from Party p where p.owner = :owner", Party.class)
                 .setParameter("owner", ownerName)
                 .getResultList()

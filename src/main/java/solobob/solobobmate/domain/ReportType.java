@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 public enum ReportType {
-    AD("광고"),CHEAT("사기"), ESCAPE("탈주"), INSULT("욕설/부적절한 언어"), PORN("음란물"), SPAM("도배"), THREAT("비방/위협"), ETC("기타");
+    ESCAPE("탈주"), INSULT("욕설/부적절한 언어");
 
     private final String value;
 

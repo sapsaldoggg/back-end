@@ -11,6 +11,7 @@ import solobob.solobobmate.controller.reportDto.ReportInfoDto;
 import solobob.solobobmate.domain.Member;
 import solobob.solobobmate.domain.Party;
 import solobob.solobobmate.domain.Report;
+import solobob.solobobmate.domain.ReportType;
 import solobob.solobobmate.repository.ReportRepository;
 
 import java.util.List;
@@ -30,7 +31,9 @@ public class ReportService {
         if (fromMember.getId().equals(toMember.getId())){
             throw new SoloBobException(ErrorCode.REPORT_MYSELF);
         }
-        if (reportRepository.findByFromMemberAndToMember(fromMember, toMember).isPresent()){
+
+        // 신고한 이력이 있으면 신고 x (단, 탈주는 가능)
+        if (reportRepository.existsByFromMemberAndToMember(fromMember, toMember) && !reportDto.getReportType().equals(ReportType.ESCAPE)){
             throw new SoloBobException(ErrorCode.REPORT_DUPLICATE);
         }
 

@@ -10,5 +10,6 @@ import java.util.Optional;
 public interface ReportRepository extends JpaRepository<Report, Long> {
     List<Report> findAllByToMemberId(Long toMemberId);
 
-    Optional<Report> findByFromMemberAndToMember(Member fromMember, Member toMember);
+//    Optional<Report> findByFromMemberAndToMember(Member fromMember, Member toMember);
+    Boolean existsByFromMemberAndToMember(Member fromMember, Member toMember);
 }

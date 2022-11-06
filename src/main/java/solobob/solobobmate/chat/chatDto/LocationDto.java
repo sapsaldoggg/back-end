@@ -3,15 +3,11 @@ package solobob.solobobmate.chat.chatDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-
 @Getter
 @NoArgsConstructor
-public class ChatMessageDto {
-
+public class LocationDto {
     private Long roomId;
-
-    private String sender;
-
-    private String message;
-
+    private String nickname;
+    private String latitude;
+    private String longitude;
 }

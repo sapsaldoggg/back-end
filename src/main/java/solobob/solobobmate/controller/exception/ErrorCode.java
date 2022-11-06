@@ -5,6 +5,8 @@ import lombok.Getter;
 @Getter
 public enum ErrorCode {
 
+    // JWT
+    TOKEN_EXPIRED(1000, "토큰이 만료되었습니다"),
 
     //member
     NOT_FOUND_MEMBER(2100, "존재하지 않는 회원입니다"),
@@ -38,7 +40,7 @@ public enum ErrorCode {
     // restaurant
     NOT_FOUND_RESTAURANT(2300, "식당이 존재하지 않습니다"),
 
-    NOT_FOUNT_CHATROOM(2400, "채팅방이 존재하지 않습니다"),
+    NOT_FOUND_CHATROOM(2400, "채팅방이 존재하지 않습니다"),
 
 
 

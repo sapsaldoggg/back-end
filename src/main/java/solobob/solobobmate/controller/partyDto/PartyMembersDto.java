@@ -1,6 +1,5 @@
 package solobob.solobobmate.controller.partyDto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import solobob.solobobmate.domain.Member;
 
@@ -9,7 +8,7 @@ public class PartyMembersDto {
 
     private Long id;
 
-    private String nickName;
+    private String nickname;
 
     private String sex;
 
@@ -25,7 +24,7 @@ public class PartyMembersDto {
 
     public PartyMembersDto(Member member) {
         this.id = member.getId();
-        this.nickName = member.getNickname();
+        this.nickname = member.getNickname();
         this.sex = member.getSex();
         this.dept = member.getDept();
         this.sno = member.getSno();

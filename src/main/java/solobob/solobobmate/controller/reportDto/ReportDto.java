@@ -1,11 +1,11 @@
 package solobob.solobobmate.controller.reportDto;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import solobob.solobobmate.domain.ReportType;
 
-@Data
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReportDto {
