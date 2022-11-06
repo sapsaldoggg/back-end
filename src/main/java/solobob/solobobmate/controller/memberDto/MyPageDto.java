@@ -17,5 +17,5 @@ public class MyPageDto {
 
     private Integer sno;
 
-    private Long reliability;
+//    private Long reliability;
 }

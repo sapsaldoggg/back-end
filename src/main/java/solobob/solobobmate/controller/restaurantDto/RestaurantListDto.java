@@ -24,7 +24,7 @@ public class RestaurantListDto {
         this.name = restaurant.getName();
         this.category = restaurant.getCategory();
         this.address = restaurant.getAddress();
-        this.longitude = restaurant.getLongtitude();
+        this.longitude = restaurant.getLongitude();
         this.latitude = restaurant.getLatitude();
     }
 }

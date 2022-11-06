@@ -1,11 +1,6 @@
 package solobob.solobobmate.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import solobob.solobobmate.controller.exception.ErrorCode;
-import solobob.solobobmate.controller.exception.SoloBobException;
-import solobob.solobobmate.controller.memberDto.JoinDto;
 import solobob.solobobmate.controller.memberDto.MyPageDto;
-import solobob.solobobmate.domain.Authority;
 import solobob.solobobmate.domain.Member;
 import solobob.solobobmate.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +27,7 @@ public class MemberService {
                 .university(member.getUniversity())
                 .dept(member.getDept())
                 .sno(member.getSno())
-                .reliability(member.getReliability())
+//                .reliability(member.getReliability())
                 .build();
 
         return myPageDto;

@@ -1,6 +1,5 @@
 package solobob.solobobmate.controller.partyDto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import solobob.solobobmate.domain.Party;
 
@@ -11,17 +10,10 @@ import java.util.stream.Collectors;
 @Data
 public class PartyListDto {
 
-    private Long partyId;
-
     private List<PartyInfoDto> parties;
 
 
     public PartyListDto(List<Party> parties){
-        this.parties = parties.stream().map(p -> new PartyInfoDto(p)).collect(Collectors.toList());
-    }
-
-    public PartyListDto(Long partyId, List<Party> parties) {
-        this.partyId = partyId;
         this.parties = parties.stream().map(p -> new PartyInfoDto(p)).collect(Collectors.toList());
     }
 }

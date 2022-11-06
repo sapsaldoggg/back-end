@@ -106,6 +106,7 @@ public class Party extends BaseEntity{
     public void deleteMember(Member member) {
         member.setParty(null);
         member.setIsJoined(false);
+        member.setIsReady(false);
         this.getMembers().remove(member);  //추가 쿼리 발생
         this.currentNumber--;
         nonFull();

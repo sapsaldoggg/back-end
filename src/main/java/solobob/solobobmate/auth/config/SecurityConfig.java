@@ -29,6 +29,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        http.headers().frameOptions().sameOrigin();
         http.csrf().disable()
                 .cors().configurationSource(corsConfigurationSource())
 
@@ -44,6 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/user/**").authenticated()
+                .antMatchers("/ws-stomp").authenticated()
                 .anyRequest().permitAll()
 
                 .and()

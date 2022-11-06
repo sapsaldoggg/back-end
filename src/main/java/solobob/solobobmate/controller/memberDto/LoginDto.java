@@ -1,11 +1,11 @@
 package solobob.solobobmate.controller.memberDto;
 
-import lombok.Data;
+import lombok.Getter;
 
 import javax.validation.constraints.NotBlank;
 
 
-@Data
+@Getter
 public class LoginDto {
 
     @NotBlank

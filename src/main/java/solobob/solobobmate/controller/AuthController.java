@@ -2,7 +2,11 @@ package solobob.solobobmate.controller;
 
 import org.springframework.http.ResponseCookie;
 import solobob.solobobmate.auth.jwt.TokenDto;
+import solobob.solobobmate.controller.exception.ErrorCode;
+import solobob.solobobmate.controller.exception.SoloBobException;
 import solobob.solobobmate.controller.memberDto.LoginDto;
+import solobob.solobobmate.controller.memberDto.MemberInfoDto;
+import solobob.solobobmate.domain.Member;
 import solobob.solobobmate.service.AuthService;
 import solobob.solobobmate.service.email.VerifyCodeService;
 import solobob.solobobmate.controller.memberDto.JoinDto;
@@ -10,14 +14,12 @@ import solobob.solobobmate.domain.email.VerifyCode;
 import solobob.solobobmate.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
+import java.util.Map;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -42,12 +44,18 @@ public class AuthController {
      * 로그인 성공 시, header(Authorization) : accessToken, Cookie : refreshToken 응답
      */
     @PostMapping("/login")
-    public void login(@RequestBody @Validated LoginDto loginDto, HttpServletResponse response) {
+    public ResponseEntity login(@RequestBody @Validated LoginDto loginDto, HttpServletResponse response) {
 
         TokenDto tokenDto = authService.login(loginDto);
 
         response.setHeader("Authorization", "Bearer "+tokenDto.getAccessToken());
         response.setHeader("Set-Cookie", setRefreshToken(tokenDto.getRefreshToken()).toString());
+
+        Member member = memberRepository.findByLoginId(loginDto.getLoginId()).orElseThrow(
+                () -> new SoloBobException(ErrorCode.NOT_FOUND_MEMBER)
+        );
+
+        return ResponseEntity.ok(new MemberInfoDto(member.getId(), member.getNickname()));
     }
 
     public ResponseCookie setRefreshToken(String refreshToken) {
@@ -78,10 +86,10 @@ public class AuthController {
 
     //아이디 중복검사
     @PostMapping("/duplicate-loginId")
-    public ResponseEntity duplicateId(@RequestBody String loginId) {
-        log.info(loginId);
-        if (memberRepository.findByLoginId(loginId).isPresent()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
+    public ResponseEntity duplicateId(@RequestBody Map<String, String> loginIdMap) {
+        log.info(loginIdMap.get("loginId"));
+        if (memberRepository.findByLoginId(loginIdMap.get("loginId")).isPresent()) {
+            return ResponseEntity.ok(false);
         } else {
             return ResponseEntity.ok(true);
         }
@@ -90,11 +98,10 @@ public class AuthController {
 
     //닉네임 중복 검사
     @PostMapping("/duplicate-nickname")
-    public ResponseEntity duplicateNickName(@RequestBody String nickname) {
-        log.info(nickname);
-        log.info(nickname.getClass().getName());
-        if (memberRepository.findByNickName(nickname).isPresent()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
+    public ResponseEntity duplicateNickname(@RequestBody Map<String, String> nicknameMap) {
+        log.info(nicknameMap.get("nickname"));
+        if (memberRepository.findByNickname(nicknameMap.get("nickname")).isPresent()) {
+            return ResponseEntity.ok(false);
         } else {
             return ResponseEntity.ok(true);
         }
@@ -102,19 +109,20 @@ public class AuthController {
 
     //메일로 인증코드 보내기
     @PostMapping("/mail-auth")
-    public ResponseEntity mailAuthReq(@RequestBody String email) {
-        verifyCodeService.createVerifyCode(email);
+    public ResponseEntity mailAuthReq(@RequestBody Map<String, String> emailMap) {
+        log.info(emailMap.get("email"));
+        verifyCodeService.createVerifyCode(emailMap.get("email"));
         return ResponseEntity.ok(true);
     }
 
 
     //메일 인증 결과
     @PostMapping("/mailcode-auth")
-    public ResponseEntity mailCodeAuth(@RequestBody String code) {
-        log.info(code);
-        Optional<VerifyCode> result = authService.confirmEmail(code);
+    public ResponseEntity mailCodeAuth(@RequestBody Map<String, String> codeMap) {
+        log.info(codeMap.get("code"));
+        Optional<VerifyCode> result = authService.confirmEmail(codeMap.get("code"));
         if (result.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
+            return ResponseEntity.ok(false);
         }
         return ResponseEntity.ok(true);
     }

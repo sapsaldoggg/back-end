@@ -14,9 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import solobob.solobobmate.service.PartyService;
 
-import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -55,9 +53,12 @@ public class MemberController {
     // 고쳐야됨
     @GetMapping("/myParty")
     public ResponseEntity myParty() {
-        Member member = memberRepository.findByLoginIdWithParty(SecurityUtil.getCurrentMemberId()).orElseThrow(
-                () -> new SoloBobException(ErrorCode.NOT_FOUND_MEMBER)
+        Member member = getMember();
+
+        memberRepository.findByLoginIdWithParty(member.getLoginId()).orElseThrow(
+                () -> new SoloBobException(ErrorCode.PARTY_MY_PARTY)
         );
+
         return ResponseEntity.ok(partyService.myPartyInfo(member));
     }
 
