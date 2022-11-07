@@ -117,7 +117,11 @@ public class PartyController {
                 () -> new SoloBobException(ErrorCode.NOT_FOUND_PARTY)
         );
 
-        partyService.exit(party, member);
+        Member owner = memberRepository.findByNickname(party.getOwner()).orElseThrow(
+                () -> new SoloBobException(ErrorCode.NOT_FOUND_MEMBER)
+        );
+
+        partyService.exit(party, member, owner);
     }
 
 
