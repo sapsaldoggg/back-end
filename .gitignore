@@ -38,5 +38,5 @@ out/
 .vscode/
 
 ### YML ####
-mail.yml
+application-ENV.properties
 

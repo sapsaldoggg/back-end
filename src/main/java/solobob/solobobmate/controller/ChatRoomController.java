@@ -42,6 +42,7 @@ public class ChatRoomController {
         List<Chat> chats = chatRepository.findChatsByCreatedDateDesc(party.getChatRoom().getId(), offset);
         chats.sort(Comparator.comparing(Chat::getCreateAt));
 
+
         return ResponseEntity.ok(new ChatRoomDto(party.getChatRoom().getId(), chats));
     }
 
