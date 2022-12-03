@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import solobob.solobobmate.auth.config.SecurityUtil;
 import solobob.solobobmate.auth.jwt.TokenDto;
 import solobob.solobobmate.auth.jwt.TokenProvider;
 import solobob.solobobmate.controller.memberDto.JoinDto;
@@ -29,6 +30,11 @@ public class AuthService {
     private final VerifyCodeService verifyCodeService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
+
+
+    public String getLoginId() {
+        return SecurityUtil.getCurrentMemberId();
+    }
 
     /**
      * 회원가입

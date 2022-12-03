@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import solobob.solobobmate.repository.MemberRepository;
 import solobob.solobobmate.repository.PartyRepository;
 
 import static solobob.solobobmate.controller.exception.ErrorCode.*;
@@ -19,6 +20,7 @@ import static solobob.solobobmate.controller.exception.ErrorCode.*;
 @RequiredArgsConstructor
 public class PartyService {
 
+    private final MemberRepository memberRepository;
     private final PartyRepository partyRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomService chatRoomService;
@@ -124,7 +126,10 @@ public class PartyService {
 
 
     //내 파티 정보
-    public PartyDto myPartyInfo(Member member) {
+    public PartyDto myPartyInfo(String loginId) {
+        Member member = memberRepository.findByLoginId(loginId).orElseThrow(
+                () -> new SoloBobException(NOT_FOUND_MEMBER)
+        );
         if (member.getParty() == null) {
             throw new SoloBobException(PARTY_MY_PARTY);
         }
