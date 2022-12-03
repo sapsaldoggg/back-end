@@ -2,22 +2,17 @@ package solobob.solobobmate.service;
 
 import solobob.solobobmate.controller.memberDto.MyPageDto;
 import solobob.solobobmate.domain.Member;
-import solobob.solobobmate.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import solobob.solobobmate.repository.MemberRepository;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class MemberService {
-
-    private final MemberRepository memberRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
-
 
 
     public MyPageDto detail(Member member) {

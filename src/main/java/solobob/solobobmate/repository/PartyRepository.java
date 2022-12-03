@@ -1,107 +1,29 @@
 package solobob.solobobmate.repository;
 
-
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import solobob.solobobmate.domain.Party;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
-@Transactional(readOnly = true)
-@RequiredArgsConstructor
-public class PartyRepository {
+public interface PartyRepository extends JpaRepository<Party, Long> {
 
-    private final EntityManager em;
+    @Query("select p from Party p")
+    List<Party> findPartiesByCreatedDateDesc(Pageable pageable);
 
+    @Query("select p from Party p where p.title = :keyword")
+    List<Party> findWithKeyword(@Param("keyword")String keyword, Pageable pageable);
 
-    public void save(Party party) {
-        em.persist(party);
-    }
+    @EntityGraph(attributePaths = {"members","restaurant","chatRoom"})
+    @Query("select p from Party p where p.id = :id")
+    Optional<Party> findWithAllById(@Param("id")Long id);
 
-
-    public Optional<Party> findById(Long id) {
-        return Optional.ofNullable(em.find(Party.class, id));
-    }
-
-    public List<Party> findPartiesByCreatedDateDesc(int offset){
-        return em.createQuery("select distinct p from Party p order by p.createAt desc")
-                .setFirstResult(offset)
-                .setMaxResults(10)
-                .getResultList();
-    }
-
-    public List<Party> findWithKeyword(String keyword, int offset){
-        return em.createQuery("select distinct p from Party p where p.title like CONCAT('%', :keyword, '%') order by p.createAt desc")
-                .setParameter("keyword", keyword)
-                .setFirstResult(offset)
-                .setMaxResults(10)
-                .getResultList();
-    }
-
-    /**
-     * @param id
-     * @return 파티 정보 반환 (파티 + 멤버 + 식당 + 채팅방)
-     */
-    public Optional<Party> findWithAllById(Long id) {
-        return em.createQuery("select distinct p from Party p " +
-                        "join fetch p.members " +
-                        "join fetch p.restaurant " +
-                        "join fetch p.chatRoom " +
-                        "where p.id = :id", Party.class)
-                .setParameter("id", id)
-                .getResultList()
-                .stream().findFirst();
-    }
-
-    public Optional<Party> findWithChat(Long id) {
-        return em.createQuery("select distinct p from Party p " +
-                        "join fetch p.chatRoom cr " +
-                        "join fetch cr.chats " +
-                        "where p.id = :id", Party.class)
-                .setParameter("id", id)
-                .getResultList().stream().findFirst();
-    }
-
-
-
-    /**
-     *
-     * @param restaurant_id : 식당 아이디
-     * @return 식당에 포함되는 파티 목록 반환 (파티 + 식당)
-     */
-    public List<Party> findWithRestaurant(Long restaurant_id) {
-        return em.createQuery("select p from Party p join fetch p.restaurant r where r.id = :id", Party.class)
-                .setParameter("id", restaurant_id)
-                .getResultList();
-    }
-
-
-
-    /**
-     *
-     * @param ownerName : 방장 이름
-     * @return  방장 이름에 해당하는 파티 있을 시, 반환
-     */
-    public Optional<Party> findByOwnerNickname(String ownerName) {
-        return em.createQuery("select p from Party p where p.owner = :owner", Party.class)
-                .setParameter("owner", ownerName)
-                .getResultList()
-                .stream().findFirst();
-    }
-
-
-
-
-    /**
-     * 파티 삭제
-     * @param party
-     */
-    public void removeParty(Party party) {
-        em.remove(party);
-    }
+    // @EntityGraph(default:left join fetch) 이므로 일관성을 깸
+    @Query("select p from Party p join fetch p.restaurant r where r.id = :id")
+    List<Party> findWithRestaurant(@Param("id") Long id);
 
 }

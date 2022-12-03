@@ -2,8 +2,11 @@ package solobob.solobobmate.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import solobob.solobobmate.chat.RedisSubscriber;
@@ -31,7 +34,8 @@ public class ChatRoomController {
 
 
     @GetMapping("/chat")
-    public ResponseEntity chats(@PathVariable(name = "party_id") Long id, @RequestParam int offset) {
+    public ResponseEntity chats(@PathVariable(name = "party_id") Long id,
+                                @PageableDefault(size=50, sort = "createAt", direction = Sort.Direction.DESC) Pageable pageable) {
         Party party = partyRepository.findById(id).orElseThrow(
                 () -> new SoloBobException(ErrorCode.NOT_FOUND_PARTY)
         );
@@ -39,7 +43,7 @@ public class ChatRoomController {
         ChannelTopic topic = new ChannelTopic("/sub/chat/" + party.getChatRoom().getId());
         redisMessageListenerContainer.addMessageListener(redisSubscriber, topic);
 
-        List<Chat> chats = chatRepository.findChatsByCreatedDateDesc(party.getChatRoom().getId(), offset);
+        List<Chat> chats = chatRepository.findChatsByCreatedDateDesc(party.getChatRoom().getId(), pageable);
         chats.sort(Comparator.comparing(Chat::getCreateAt));
 
 

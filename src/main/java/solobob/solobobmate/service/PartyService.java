@@ -1,16 +1,17 @@
 package solobob.solobobmate.service;
 
-import solobob.solobobmate.controller.exception.ErrorCode;
 import solobob.solobobmate.controller.exception.SoloBobException;
 import solobob.solobobmate.controller.partyDto.PartyDto;
 import solobob.solobobmate.controller.reportDto.ReportDto;
 import solobob.solobobmate.domain.*;
 import solobob.solobobmate.repository.ChatRoomRepository;
-import solobob.solobobmate.repository.PartyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import solobob.solobobmate.repository.PartyRepository;
+
+import static solobob.solobobmate.controller.exception.ErrorCode.*;
 
 
 @Service
@@ -28,7 +29,7 @@ public class PartyService {
     @Transactional
     public Party create(Member member, Restaurant restaurant, String title, int maxNumber) {
         if (member.getIsJoined()) {
-            throw new SoloBobException(ErrorCode.PARTY_CREATE);
+            throw new SoloBobException(PARTY_CREATE);
         }
         ChatRoom chatRoom = chatRoomService.create();
         Party party = Party.create(member, restaurant, chatRoom, title, maxNumber);
@@ -41,7 +42,7 @@ public class PartyService {
     @Transactional
     public void update(Party party, String title, int maxNumber) {
         if (party.getMembers().size() > maxNumber) {
-            throw new SoloBobException(ErrorCode.PARTY_UPDATE);
+            throw new SoloBobException(PARTY_UPDATE);
         }
         party.update(title, maxNumber);
     }
@@ -51,11 +52,11 @@ public class PartyService {
     @Transactional
     public PartyDto join(Party party, Member member) {
         if (party.getFullStatus() == FullStatus.FULL) {
-            throw new SoloBobException(ErrorCode.PARTY_JOIN_FULL);
+            throw new SoloBobException(PARTY_JOIN_FULL);
         } else if (member.getIsJoined()) {
-            throw new SoloBobException(ErrorCode.PARTY_JOIN_JOINED);
+            throw new SoloBobException(PARTY_JOIN_JOINED);
         } else if (party.getMatchingStatus() == MatchingStatus.MATCHED) {
-            throw new SoloBobException(ErrorCode.PARTY_JOIN_MATCHED);
+            throw new SoloBobException(PARTY_JOIN_MATCHED);
         }
         party.addMember(member);
 
@@ -66,8 +67,10 @@ public class PartyService {
     // 파티 나가기 (멤버만 가능, 방장x)
     @Transactional
     public void exit(Party party, Member member, Member owner) {
-        if (member.getOwner()) {
-            throw new SoloBobException(ErrorCode.PARTY_EXIT_OWNER);
+        if (!member.getIsJoined()) {
+            throw new SoloBobException(PARTY_MY_PARTY);
+        } else if (member.getOwner()) {
+            throw new SoloBobException(PARTY_EXIT_OWNER);
         } else if (party.getMatchingStatus() == MatchingStatus.MATCHED) {
             // 매칭 상태에서 나가면 신고 1스택 쌓임 (탈주항목으로 신고한 것으로 됨)
             reportService.reportMember(owner, member, party, new ReportDto(member.getId(), ReportType.ESCAPE, "탈주로 인해 자동으로 신고되었습니다."));
@@ -79,7 +82,7 @@ public class PartyService {
     @Transactional
     public void startOrReady(Party party, Member member) {
         if (member.getParty().getId() != party.getId()){
-            throw new SoloBobException(ErrorCode.PARTY_MY_PARTY);
+            throw new SoloBobException(PARTY_MY_PARTY);
         }
 
         if (member.getOwner()){  //방장인 경우
@@ -90,16 +93,16 @@ public class PartyService {
                     if (readyStatus(party)){
                         party.startParty(member);
                     }else{
-                        throw new SoloBobException(ErrorCode.PARTY_SOR_READY);
+                        throw new SoloBobException(PARTY_SOR_READY);
                     }
                 }else{
-                    throw new SoloBobException(ErrorCode.PARTY_SOR_NUM);
+                    throw new SoloBobException(PARTY_SOR_NUM);
                 }
             }
         }else{      // 방장 아닌 경우
             if (member.getIsReady()) {  //파티 준비 취소
                 if (party.getMatchingStatus() == MatchingStatus.MATCHED) {  //이미 시작이 된 경우
-                    throw new SoloBobException(ErrorCode.PARTY_SOR_MATCH);
+                    throw new SoloBobException(PARTY_SOR_MATCH);
                 }else{  //파티 준비 취소 작업 가능
                     party.cancelReady(member);
                 }
@@ -123,7 +126,7 @@ public class PartyService {
     //내 파티 정보
     public PartyDto myPartyInfo(Member member) {
         if (member.getParty() == null) {
-            throw new SoloBobException(ErrorCode.PARTY_MY_PARTY);
+            throw new SoloBobException(PARTY_MY_PARTY);
         }
         return partyInfoReturn(member.getParty());
     }
@@ -139,7 +142,7 @@ public class PartyService {
     @Transactional
     public void initialMembers(Member member, Party party) {
         if (!member.getOwner()) {
-            throw new SoloBobException(ErrorCode.PARTY_DELETE_OWNER);
+            throw new SoloBobException(PARTY_DELETE_OWNER);
         }
         for (Member partyMember : party.getMembers()) {
             if (partyMember.getOwner()) { //프록시 객체 초기화 => (1)+1
@@ -156,7 +159,7 @@ public class PartyService {
 
         chatRoomRepository.delete(party.getChatRoom());
 
-        partyRepository.removeParty(party);
+        partyRepository.delete(party);
 
     }
 
@@ -165,27 +168,15 @@ public class PartyService {
     @Transactional
     public void kickOutMember(Member member, Member kickMember, Party party){
         if (!member.getOwner()) {
-            throw new SoloBobException(ErrorCode.PARTY_DELETE_OWNER);
+            throw new SoloBobException(PARTY_DELETE_OWNER);
         }
         if (!party.getMembers().contains(kickMember)){
-            throw new SoloBobException(ErrorCode.PARTY_MY_PARTY);
+            throw new SoloBobException(PARTY_MY_PARTY);
         }
 
         party.deleteMember(kickMember);
     }
 
-
-//    public void removePartyScheduler() {
-//        List<Party> parties = partyRepository.findAllWithMembers();
-//        for (Party party : parties) {
-//            if (party.getMatchingStatus() == MatchingStatus.MATCHED) {
-//                Duration duration = Duration.between(party.getMatchingStartTime(), LocalDateTime.now());
-//                if (duration.getSeconds() >= 7200) {   //2시간 지나면
-//                    initialMembers(party);
-//                }
-//            }
-//        }
-//    }
 
 
 }

@@ -1,6 +1,9 @@
 package solobob.solobobmate.controller;
 
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import solobob.solobobmate.auth.config.SecurityUtil;
 import solobob.solobobmate.controller.exception.ErrorCode;
 import solobob.solobobmate.controller.exception.SoloBobException;
@@ -22,7 +25,6 @@ import solobob.solobobmate.service.ReportService;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -48,18 +50,19 @@ public class PartyController {
 
     // 전체 파티 목록 조회
     @GetMapping("/parties")
-    public ResponseEntity parties(@RequestParam(name = "offset") int offset){
+    public ResponseEntity parties(@PageableDefault(size=10, sort = "createAt", direction = Sort.Direction.DESC) Pageable pageable){
 
-        List<Party> parties = partyRepository.findPartiesByCreatedDateDesc(offset);
+        List<Party> parties = partyRepository.findPartiesByCreatedDateDesc(pageable);
 
         return ResponseEntity.ok(new PartyListDto(parties));
     }
 
     // 키워드로 파티 조회
     @GetMapping("/party/search")
-    public ResponseEntity findPartyWithKeyword(@RequestParam(name = "keyword") String keyword, @RequestParam(name = "offset") int offset){
+    public ResponseEntity findPartyWithKeyword(@RequestParam(name = "keyword") String keyword
+            ,@PageableDefault(size=10, sort = "createAt", direction = Sort.Direction.DESC) Pageable pageable){
 
-        List<Party> parties = partyRepository.findWithKeyword(keyword, offset);
+        List<Party> parties = partyRepository.findWithKeyword(keyword, pageable);
 
         return ResponseEntity.ok(new PartyListDto(parties));
     }
@@ -76,7 +79,6 @@ public class PartyController {
 
 
     //파티 생성
-    //1차 캐시에서 조회하므로 성능최적화 필요x
     @PostMapping("/restaurant/{restaurant_id}/party")
     public ResponseEntity create(@RequestBody @Validated PartyCreateDto partyDto,
                                  @PathVariable(name = "restaurant_id") Long id) {
@@ -93,7 +95,6 @@ public class PartyController {
     }
 
     //파티 참가
-    // n+1 발생 (멤버+식당+채팅방)
     @PostMapping("/restaurant/{restaurant_id}/party/{party_id}/join")
     public ResponseEntity joinParty(@PathVariable(name = "party_id") Long id) {
         Member member = getMember();
@@ -108,7 +109,6 @@ public class PartyController {
 
 
     //파티 나가기 (멤버만 가능, 방장 x)
-    // n+1 발생
     @PostMapping("/restaurant/{restaurant_id}/party/{party_id}/exit")
     public void exitParty(@PathVariable(name = "party_id") Long id) {
         Member member = getMember();
@@ -150,7 +150,7 @@ public class PartyController {
         return ResponseEntity.ok(partyService.partyInfoReturn(party));
     }
 
-    // 파티 삭제 (방장권한) - n+1 발생
+    // 파티 삭제 (방장권한)
     @DeleteMapping("/restaurant/{restaurant_id}/party/{party_id}")
     public void delete(@PathVariable("party_id") Long id) {
         Member member = getMember();

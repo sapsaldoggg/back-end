@@ -1,13 +1,11 @@
 package solobob.solobobmate.service;
 
 import solobob.solobobmate.controller.restaurantDto.RestaurantListDto;
-import solobob.solobobmate.domain.Restaurant;
-import solobob.solobobmate.repository.RestaurantRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import solobob.solobobmate.repository.RestaurantRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
