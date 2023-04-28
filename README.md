@@ -24,8 +24,10 @@
 
 ![KakaoTalk_Photo_2023-03-06-19-28-22](https://user-images.githubusercontent.com/80155336/223084911-935ce8b1-f19a-4630-a114-67ffb75b6f90.png)  
 
-### ERD  
+### ERD 
+<div align="center">
 <image src="/images/solobob-erd.png" width="500" height="500">
+</div>
 
 
 
