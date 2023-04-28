@@ -20,9 +20,12 @@
 <br>
 <br>
 
-### 시스템 설계
+### 시스템 설계  
+<div align="center">
+<img width="567" alt="스크린샷 2023-04-28 오후 6 54 42" src="https://user-images.githubusercontent.com/80155336/235117226-ba548d00-8be0-49a9-aa8a-cd2a8e2deb3b.png">  
+</div>
 
-![KakaoTalk_Photo_2023-03-06-19-28-22](https://user-images.githubusercontent.com/80155336/223084911-935ce8b1-f19a-4630-a114-67ffb75b6f90.png)  
+
 
 ### ERD 
 <div align="center">
